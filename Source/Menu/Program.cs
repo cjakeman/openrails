@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 
+
+
 namespace ORTS
 {
     static class Program
@@ -90,6 +92,11 @@ namespace ORTS
                     switch (MainForm.SelectedAction)
                     {
                         case MainForm.UserAction.SingleplayerNewGame:
+
+                            //CJ
+                            new InstallContent().Dev();
+                            return;
+
                         case MainForm.UserAction.MultiplayerClient:
                         case MainForm.UserAction.MultiplayerServer:
                             if (MainForm.SelectedActivity is ORTS.Menu.DefaultExploreActivity)
