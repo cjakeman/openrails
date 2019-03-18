@@ -92,11 +92,6 @@ namespace ORTS
                     switch (MainForm.SelectedAction)
                     {
                         case MainForm.UserAction.SingleplayerNewGame:
-
-                            //CJ
-                            new InstallContent().Dev();
-                            return;
-
                         case MainForm.UserAction.MultiplayerClient:
                         case MainForm.UserAction.MultiplayerServer:
                             if (MainForm.SelectedActivity is ORTS.Menu.DefaultExploreActivity)

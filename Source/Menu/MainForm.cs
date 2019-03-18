@@ -337,6 +337,11 @@ namespace ORTS
         }
         #endregion
 
+        public void SetRoute()
+        {
+
+        }
+
         #region Folders
         void comboBoxFolder_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1331,7 +1336,7 @@ namespace ORTS
             Win32() { }
 
             /// <summary>
-            /// Lock ore relase the wndow for updating.
+            /// Lock or release the window for updating.
             /// </summary>
             [DllImport("user32")]
             public static extern int LockWindowUpdate(IntPtr hwnd);

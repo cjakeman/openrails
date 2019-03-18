@@ -55,6 +55,8 @@ namespace ORTS
             }
         }
 
+        public BindingSource BindingSourceContent;
+
         public OptionsForm(UserSettings settings, UpdateManager updateManager, bool initialContentSetup)
         {
             InitializeComponent();
@@ -63,6 +65,7 @@ namespace ORTS
 
             Settings = settings;
             UpdateManager = updateManager;
+
 
             // Collect all the available language codes by searching for
             // localisation files, but always include English (base language).
@@ -637,8 +640,17 @@ namespace ORTS
 
         private void buttonContentAdd_Click(object sender, EventArgs e)
         {
-            bindingSourceContent.AddNew();
-            buttonContentBrowse_Click(sender, e);
+            //CJ
+            //bindingSourceContent.AddNew();
+            //buttonContentBrowse_Click(sender, e);
+
+            //var addedName = "Zig Zag Railway";
+            //var addedPath = @"C:\data\play\MSTS Independent Routes\Zig Zag Railway";
+            var addedName = "Demo Model 1";
+            var addedPath = @"C:\data\play\MSTS Independent Routes\Demo Model 1";
+            AppendContent(addedName, addedPath);
+            //MainForm.SetFolder(addedPath); // Make this the selected one
+            Settings.Menu_Selection[(int)UserSettings.Menu_SelectionIndex.Folder] = addedPath;
         }
 
         private void buttonContentDelete_Click(object sender, EventArgs e)
@@ -681,23 +693,28 @@ namespace ORTS
             var current = bindingSourceContent.Current as ContentFolder;
             if (current != null && current.Name != textBoxContentName.Text)
             {
-                // Duplicate names lead to an exception, so append " copy" if not unique
-                var suffix = "";
-                var isNameUnique = true;
-                while (isNameUnique)
-                {
-                    isNameUnique = false; // to exit after a single pass
-                    foreach (var item in bindingSourceContent)
-                        if (((ContentFolder)item).Name == textBoxContentName.Text + suffix)
-                        {
-                            suffix += " copy"; // To ensure uniqueness
-                            isNameUnique = true; // to force another pass
-                            break;
-                        }
-                }
-                current.Name = textBoxContentName.Text + suffix;
-                bindingSourceContent.ResetCurrentItem();
+                RenameDuplicateContent(current, textBoxContentName.Text);
             }
+        }
+
+        private void RenameDuplicateContent(ContentFolder current, string nameToCheck)
+        {
+            // Duplicate names lead to an exception, so append " copy" if not unique
+            var suffix = "";
+            var isNameUnique = true;
+            while (isNameUnique)
+            {
+                isNameUnique = false; // to exit after a single pass
+                foreach (var item in bindingSourceContent)
+                    if (((ContentFolder)item).Name == nameToCheck + suffix)
+                    {
+                        suffix += " copy"; // To ensure uniqueness
+                        isNameUnique = true; // to force another pass
+                        break;
+                    }
+            }
+            current.Name = nameToCheck + suffix;
+            bindingSourceContent.ResetCurrentItem();
         }
 
         private void checkAlerter_CheckedChanged(object sender, EventArgs e)
@@ -737,6 +754,24 @@ namespace ORTS
         {
             numericPerformanceTunerTarget.Enabled = checkPerformanceTuner.Checked;
             labelPerformanceTunerTarget.Enabled = checkPerformanceTuner.Checked;
+        }
+
+        //CJ
+        public void AppendContent(string name, string path)
+        {
+            // Check for name already in list
+            // Cannot use RenameDuplicateContent() as that works for editing a name which initially has no duplicate, 
+            // not for adding one which may already have.
+            var list = bindingSourceContent.List.OfType<ContentFolder>();
+            while (list.Count(r => r.Name.Equals(name, StringComparison.OrdinalIgnoreCase)) > 0)
+                name += " copy";
+
+            var newFolder = new ContentFolder() { Name = name, Path = path };
+            bindingSourceContent.Add(newFolder);
+            
+            // Move selection to the new row
+            var lastRow = dataGridViewContent.Rows.Count - 1;
+            dataGridViewContent.Rows[lastRow].Selected = true;
         }
     }
 }

@@ -51,8 +51,9 @@ namespace ORTS
             // To work with zip archives, OpenRails uses System.IO.Package in ImportExportSaveForm
             // and Ionic.Zip in Update.UpdateManager.
             // We'll follow UpdateManager here.
-            DownloadContent(SourceUrl, SourceFolderPath, SourceFilePath, 0, 100);
-            ExtractContent(SourceFilePath, DestinationFolderPath, 0, 100);
+            //DownloadContent(SourceUrl, SourceFolderPath, SourceFilePath, 0, 100);
+            //ExtractContent(SourceFilePath, DestinationFolderPath, 0, 100);
+
 
         }
 
