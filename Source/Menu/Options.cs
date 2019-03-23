@@ -641,16 +641,19 @@ namespace ORTS
         private void buttonContentAdd_Click(object sender, EventArgs e)
         {
             //CJ
+            // TO RESTORE
             //bindingSourceContent.AddNew();
             //buttonContentBrowse_Click(sender, e);
 
+            new FindContent();
+
+            // WORKS
             //var addedName = "Zig Zag Railway";
             //var addedPath = @"C:\data\play\MSTS Independent Routes\Zig Zag Railway";
-            var addedName = "Demo Model 1";
-            var addedPath = @"C:\data\play\MSTS Independent Routes\Demo Model 1";
-            AppendContent(addedName, addedPath);
-            //MainForm.SetFolder(addedPath); // Make this the selected one
-            Settings.Menu_Selection[(int)UserSettings.Menu_SelectionIndex.Folder] = addedPath;
+            //var addedName = "Demo Model 1";
+            //var addedPath = @"C:\data\play\MSTS Independent Routes\Demo Model 1";
+            //AppendContent(addedName, addedPath);
+            //Settings.Menu_Selection[(int)UserSettings.Menu_SelectionIndex.Folder] = addedPath;
         }
 
         private void buttonContentDelete_Click(object sender, EventArgs e)
