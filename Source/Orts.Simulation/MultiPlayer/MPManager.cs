@@ -71,7 +71,7 @@ namespace Orts.MultiPlayer
 		public bool weatherChanged = false;
 		public int weather = -1;
         public float fogDistance = -1f;
-        public float pricipitationIntensity = -1f;
+        public float precipitationIntensity = -1f;
         public float overcastFactor = -1f;
         public double serverTimeDifference = 0;
 
@@ -505,7 +505,7 @@ namespace Orts.MultiPlayer
         //create weather message
         public string GetEnvInfo()
         {
-            return (new MSGWeather(-1, overcastFactor, pricipitationIntensity, fogDistance)).ToString();//update weather
+            return (new MSGWeather(-1, overcastFactor, precipitationIntensity, fogDistance)).ToString();//update weather
 
         }
 

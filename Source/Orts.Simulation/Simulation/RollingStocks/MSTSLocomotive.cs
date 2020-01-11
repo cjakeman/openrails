@@ -1525,7 +1525,7 @@ namespace Orts.Simulation.RollingStocks
 
                 Trace.TraceInformation("Fog - Min {0} fog {1}", Math.Min((Simulator.Weather.FogDistance * 2.75e-4f + 0.45f), 1.0f), Simulator.Weather.FogDistance);
 
-                Trace.TraceInformation("Rain - Min {0} pric {1}", Math.Min((Simulator.Weather.PricipitationIntensityPPSPM2 * 0.0078f + 0.45f), 0.607f), Simulator.Weather.PricipitationIntensityPPSPM2);
+                Trace.TraceInformation("Rain - Min {0} pric {1}", Math.Min((Simulator.Weather.PrecipitationIntensityPPSPM2 * 0.0078f + 0.45f), 0.607f), Simulator.Weather.PrecipitationIntensityPPSPM2);
 
             }
 #endif
@@ -2127,7 +2127,7 @@ namespace Orts.Simulation.RollingStocks
                         // ie base value between 0.607 and 0.45 
                         // note lowest friction will be for drizzle rain; friction will increase for precipitation both higher and lower than drizzle rail
                     {
-                       float pric = Simulator.Weather.PricipitationIntensityPPSPM2 * 1000;
+                       float pric = Simulator.Weather.PrecipitationIntensityPPSPM2 * 1000;
                 // precipitation will calculate a value between 0.15 (light rain) and 0.2 (heavy rain) - this will be a factor that is used to adjust the base value - assume linear value between upper and lower precipitation values
                         if (pric >= 0.5)
                             BaseFrictionCoefficientFactor = Math.Min((pric * 0.0078f + 0.45f), 0.607f);
