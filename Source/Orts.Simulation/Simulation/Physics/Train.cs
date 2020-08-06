@@ -918,7 +918,10 @@ namespace Orts.Simulation.Physics
             if (count > 0)
             {
                 for (int i = 0; i < count; ++i)
+                {
                     Cars.Add(RollingStock.Restore(simulator, inf, this));
+                    var car = Cars[i];
+                }
             }
         }
 
@@ -1695,8 +1698,15 @@ namespace Orts.Simulation.Physics
             TrainCar uncoupleBehindCar = null;
 
             float massKg = 0f;
+
+            var carPosition = 0;
+            var output = "";
+
             foreach (TrainCar car in Cars)
             {
+                carPosition++;
+                var oldSpeedMpS = car.SpeedMpS;
+
                 car.MotiveForceN = 0;
                 car.Update(elapsedClockSeconds);
 
@@ -1706,12 +1716,20 @@ namespace Orts.Simulation.Physics
                 massKg += car.MassKG;
                 //TODO: next code line has been modified to flip trainset physics in order to get viewing direction coincident with loco direction when using rear cab.
                 // To achieve the same result with other means, without flipping trainset physics, the line should be changed as follows:
-                //                 if (car.Flipped)
                 if (car.Flipped ^ (car.IsDriveable && car.Train.IsActualPlayerTrain && ((MSTSLocomotive)car).UsingRearCab))
                 {
                     car.TotalForceN = -car.TotalForceN;
                     car.SpeedMpS = -car.SpeedMpS;
                 }
+
+                if (carPosition == 1) output = $"{elapsedClockSeconds},{car.CouplerForceU},{car.DistanceM},{car.SpeedMpS},{car.AccelerationMpSS}";
+                if (carPosition == Cars.Count - 1) output += $",{car.CouplerForceU}";
+                if (carPosition == Cars.Count)
+                {
+                    output += $",{car.DistanceM},{car.SpeedMpS},{car.AccelerationMpSS}";
+                //    Console.WriteLine($"{output}");
+                }
+
                 if (car.WheelSlip)
                     whlslp = true;
                 if (car.WheelSlipWarning)
@@ -5451,8 +5469,12 @@ namespace Orts.Simulation.Physics
         {
             TotalCouplerSlackM = 0;
             NPull = NPush = 0;
+
+            TrainCar prevCar = null;
+
             for (int i = 0; i < Cars.Count - 1; i++)
             {
+//                Trace.TraceInformation("Loop - i {0} Count {1}", i, Cars.Count);
                 // update coupler slack distance
                 TrainCar car = Cars[i];
 
@@ -5491,7 +5513,7 @@ namespace Orts.Simulation.Physics
 
                 // Check to see if coupler is opened or closed - only closed or opened couplers have been specified
                 // It is assumed that the front coupler on first car will always be opened, and so will coupler on last car. All others on the train will be coupled
-                if (i == 0)
+                if (i == 0)  // First Car
                 {
                     if (car.FrontCouplerOpenFitted)
                     {
@@ -5508,8 +5530,8 @@ namespace Orts.Simulation.Physics
                     car.FrontCouplerOpen = false;
                 }
 
-
-                if (i == Cars.Count - 2)
+                // Set up coupler information for last car
+                if (i == Cars.Count - 2) // 2nd last car in count, but set up last car, ie i+1
                 {
 
                     if (Cars[i + 1].RearCouplerOpenFitted)
@@ -5520,7 +5542,6 @@ namespace Orts.Simulation.Physics
                     {
                         Cars[i + 1].RearCouplerOpen = false;
                     }
-
                 }
                 else
                 {
@@ -5588,8 +5609,40 @@ namespace Orts.Simulation.Physics
                 }
 
             }
+            int j = 0;
             foreach (TrainCar car in Cars)
+            {
                 car.DistanceM += Math.Abs(car.SpeedMpS * elapsedTime);
+
+                // Maintain links to cars ahead and behind for use when animating couplers
+                if (j == 0)
+                {
+                    car.CarAhead = null;
+                    if (Cars.Count > j) // if not a single loco
+                    {
+                        car.CarBehind = Cars[j + 1];
+                    }
+                    else // if a single loco
+                    {
+                        car.CarBehind = null;
+                    }
+                }
+                else if (j == Cars.Count - 1)
+                {
+                    Cars[j].CarAhead = Cars[j - 1];
+                    Cars[j].CarBehind = null;
+                }
+                else // Set up coupler information for cars between first and last car
+                {
+                    Cars[j].CarAhead = Cars[j - 1];
+                    Cars[j].CarBehind = Cars[j + 1];
+
+                }
+                
+//                Trace.TraceInformation("Set Car Info - CarID {0} Ahead {1} Behind {2} i {3} Count {4}", car.CarID, car.CarAhead, car.CarBehind, j, Cars.Count);
+
+                j = j + 1;
+            }
         }
 
         //================================================================================================//

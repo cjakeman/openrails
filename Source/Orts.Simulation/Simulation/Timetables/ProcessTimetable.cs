@@ -864,10 +864,12 @@ namespace Orts.Simulation.Timetables
             // reset train for each car
 
             int icar = 1;
+
             foreach (TrainCar car in playerTrain.Cars)
             {
                 car.Train = playerTrain;
                 car.CarID = String.Concat(playerTrain.Number.ToString("0###"), "_", icar.ToString("0##"));
+
                 icar++;
             }
 

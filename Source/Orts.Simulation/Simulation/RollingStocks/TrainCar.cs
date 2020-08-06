@@ -267,6 +267,8 @@ namespace Orts.Simulation.RollingStocks
         public bool IsAdvancedCoupler = false; // Flag to indicate that coupler is to be treated as an advanced coupler
         public float FrontCouplerSlackM; // Slack in car front coupler
         public float RearCouplerSlackM;  // Slack in rear coupler
+        public TrainCar CarAhead;
+        public TrainCar CarBehind;
 
         public float AdvancedCouplerDynamicTensionSlackLimitM;   // Varies as coupler moves
         public float AdvancedCouplerDynamicCompressionSlackLimitM; // Varies as coupler moves

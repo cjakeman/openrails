@@ -732,56 +732,11 @@ namespace Orts.Viewer3D.RollingStock
                 TrainCarShape.XNAMatrices[p.iMatrix] = Car.VibrationInverseMatrix * m;
             }
 
-            // Display rear coupler in sim if open coupler shape is configured, otherwise skip to next section, and just display closed (default) coupler if configured
-            if (FrontCouplerOpenShape != null && Car.IsAdvancedCoupler && Car.FrontCouplerOpenFitted && Car.FrontCouplerOpen && !(Viewer.Camera.AttachedCar == this.MSTSWagon && Viewer.Camera.Style == Camera.Styles.ThreeDimCab))
+            // Front coupler
+            // Display front coupler in sim
+            if (FrontCouplerShape != null && !(Viewer.Camera.AttachedCar == this.MSTSWagon && Viewer.Camera.Style == Camera.Styles.ThreeDimCab))
             {
                 // The following locates the coupler at the end of the car.
-                // Suitable for development but, for release, would be better to implement as a sub-object of the car object.
-
-                // Place the coupler in the centre of the car
-                var p = Car.WorldPosition; // abbreviation
-                FrontCouplerOpenShape.Location.Location = new Vector3(p.Location.X, p.Location.Y, p.Location.Z);
-                FrontCouplerOpenShape.Location.TileX = p.TileX;
-                FrontCouplerOpenShape.Location.TileZ = p.TileZ;
-
-                // Get the movement that would be needed to locate the coupler on the car if they were pointing in the default direction.
-                Vector3 displacement;
-                displacement.X = Car.FrontCouplerOpenAnimWidthM;
-                displacement.Y = Car.FrontCouplerOpenAnimHeightM;
-                displacement.Z = (Car.FrontCouplerOpenAnimLengthM + (Car.CarLengthM / 2.0f) + Car.FrontCouplerSlackM);
-
-                // Get the orientation of the car as a quaternion
-                p.XNAMatrix.Decompose(out Vector3 scale, out Quaternion quaternion, out Vector3 translation);
-
-                // Reverse the y axis (plan view) component - perhaps because XNA is opposite to MSTS
-                var quaternionReversed = new Quaternion(quaternion.X, -quaternion.Y, quaternion.Z, quaternion.W);
-
-                // Rotate the displacement to match the orientation of the car
-                var rotatedDisplacement = Vector3.Transform(displacement, quaternionReversed);
-
-                // Apply the rotation to the coupler displacement to keep it in place with the wagon
-                FrontCouplerOpenShape.Location.Location += rotatedDisplacement;
-
-                // Keep the coupler shape aligned with the wagon
-                FrontCouplerOpenShape.Location.XNAMatrix.M11 = Car.WorldPosition.XNAMatrix.M11;
-                FrontCouplerOpenShape.Location.XNAMatrix.M12 = Car.WorldPosition.XNAMatrix.M12;
-                FrontCouplerOpenShape.Location.XNAMatrix.M13 = Car.WorldPosition.XNAMatrix.M13;
-                FrontCouplerOpenShape.Location.XNAMatrix.M21 = Car.WorldPosition.XNAMatrix.M21;
-                FrontCouplerOpenShape.Location.XNAMatrix.M22 = Car.WorldPosition.XNAMatrix.M22;
-                FrontCouplerOpenShape.Location.XNAMatrix.M23 = Car.WorldPosition.XNAMatrix.M23;
-                FrontCouplerOpenShape.Location.XNAMatrix.M31 = Car.WorldPosition.XNAMatrix.M31;
-                FrontCouplerOpenShape.Location.XNAMatrix.M32 = Car.WorldPosition.XNAMatrix.M32;
-                FrontCouplerOpenShape.Location.XNAMatrix.M33 = Car.WorldPosition.XNAMatrix.M33;
-
-                // Display Animation Shape                    
-                FrontCouplerOpenShape.PrepareFrame(frame, elapsedTime);
-            }
-
-            // Display rear default coupler in sim, by default it will always be closed position
-            else if (FrontCouplerShape != null && Car.IsAdvancedCoupler && !(Viewer.Camera.AttachedCar == this.MSTSWagon && Viewer.Camera.Style == Camera.Styles.ThreeDimCab))
-            {
-                // The following locates the coupler at the end of the car.
-                // Suitable for development but, for release, would be better to implement as a sub-object of the car object.
 
                 // Place the coupler in the centre of the car
                 var p = Car.WorldPosition; // abbreviation
@@ -800,78 +755,60 @@ namespace Orts.Viewer3D.RollingStock
 
                 // Reverse the y axis (plan view) component - perhaps because XNA is opposite to MSTS
                 var quaternionReversed = new Quaternion(quaternion.X, -quaternion.Y, quaternion.Z, quaternion.W);
+                var quaternionCar = new Quaternion(quaternion.X, quaternion.Y, quaternion.Z, quaternion.W);
+
+                Vector3 rotatedDisplacement;
 
                 // Rotate the displacement to match the orientation of the car
-                var rotatedDisplacement = Vector3.Transform(displacement, quaternionReversed);
+                rotatedDisplacement = Vector3.Transform(displacement, quaternionReversed);
 
-                // Apply the rotation to the coupler displacement to keep it in place with the wagon
+                // Apply the rotation to the coupler's displacement to swing it round to the end of the wagon
                 FrontCouplerShape.Location.Location += rotatedDisplacement;
 
-                // Keep the coupler shape aligned with the wagon
-                FrontCouplerShape.Location.XNAMatrix.M11 = Car.WorldPosition.XNAMatrix.M11;
-                FrontCouplerShape.Location.XNAMatrix.M12 = Car.WorldPosition.XNAMatrix.M12;
-                FrontCouplerShape.Location.XNAMatrix.M13 = Car.WorldPosition.XNAMatrix.M13;
-                FrontCouplerShape.Location.XNAMatrix.M21 = Car.WorldPosition.XNAMatrix.M21;
-                FrontCouplerShape.Location.XNAMatrix.M22 = Car.WorldPosition.XNAMatrix.M22;
-                FrontCouplerShape.Location.XNAMatrix.M23 = Car.WorldPosition.XNAMatrix.M23;
-                FrontCouplerShape.Location.XNAMatrix.M31 = Car.WorldPosition.XNAMatrix.M31;
-                FrontCouplerShape.Location.XNAMatrix.M32 = Car.WorldPosition.XNAMatrix.M32;
-                FrontCouplerShape.Location.XNAMatrix.M33 = Car.WorldPosition.XNAMatrix.M33;
+                if (Car.CarAhead != null)
+                {
+                    // Consider the orientation of the car ahead
+                    var pAhead = new WorldPosition(Car.CarAhead.WorldPosition);
+                    if (Car.CarAhead.Flipped)
+                    {
+                        pAhead.XNAMatrix.M11 *= -1;
+                        pAhead.XNAMatrix.M13 *= -1;
+                        pAhead.XNAMatrix.M31 *= -1;
+                        pAhead.XNAMatrix.M33 *= -1;
+                    }
+
+                    // Get the orientation of the car as a quaternion
+                    pAhead.XNAMatrix.Decompose(out Vector3 scaleAhead, out Quaternion quaternionAhead, out Vector3 translationAhead);
+                    var quaternionCarAhead = new Quaternion(quaternionAhead.X, quaternionAhead.Y, quaternionAhead.Z, quaternionAhead.W);
+
+                    // Interpolate to find a direction halfway (0.5) between the two cars
+                    var quaternionAheadLerp = Quaternion.Lerp(quaternionCar, quaternionCarAhead, 0.5f);
+
+                    // Rotate the coupler to align with the direction between the cars
+                    FrontCouplerShape.Location.XNAMatrix = RotateCoupler(quaternionAheadLerp, FrontCouplerShape.Location.XNAMatrix);
+                }
+                else
+                {
+                    // Align the coupler shape with the wagon
+                    FrontCouplerShape.Location.XNAMatrix.M11 = Car.WorldPosition.XNAMatrix.M11;
+                    FrontCouplerShape.Location.XNAMatrix.M12 = Car.WorldPosition.XNAMatrix.M12;
+                    FrontCouplerShape.Location.XNAMatrix.M13 = Car.WorldPosition.XNAMatrix.M13;
+                    FrontCouplerShape.Location.XNAMatrix.M21 = Car.WorldPosition.XNAMatrix.M21;
+                    FrontCouplerShape.Location.XNAMatrix.M22 = Car.WorldPosition.XNAMatrix.M22;
+                    FrontCouplerShape.Location.XNAMatrix.M23 = Car.WorldPosition.XNAMatrix.M23;
+                    FrontCouplerShape.Location.XNAMatrix.M31 = Car.WorldPosition.XNAMatrix.M31;
+                    FrontCouplerShape.Location.XNAMatrix.M32 = Car.WorldPosition.XNAMatrix.M32;
+                    FrontCouplerShape.Location.XNAMatrix.M33 = Car.WorldPosition.XNAMatrix.M33;
+                }
 
                 // Display Animation Shape                    
                 FrontCouplerShape.PrepareFrame(frame, elapsedTime);
             }
 
             // Display rear coupler in sim if open coupler shape is configured, otherwise skip to next section, and just display closed (default) coupler if configured
-            if (RearCouplerOpenShape != null && Car.IsAdvancedCoupler && Car.RearCouplerOpenFitted && Car.RearCouplerOpen && !(Viewer.Camera.AttachedCar == this.MSTSWagon && Viewer.Camera.Style == Camera.Styles.ThreeDimCab))
+            if (RearCouplerShape != null && Car.IsAdvancedCoupler && !(Viewer.Camera.AttachedCar == this.MSTSWagon && Viewer.Camera.Style == Camera.Styles.ThreeDimCab))
             {
                 // The following locates the coupler at the end of the car.
-                // Suitable for development but, for release, would be better to implement as a sub-object of the car object.
-
-                // Place the coupler in the centre of the car
-                var p = Car.WorldPosition; // abbreviation
-                RearCouplerOpenShape.Location.Location = new Vector3(p.Location.X, p.Location.Y, p.Location.Z);
-                RearCouplerOpenShape.Location.TileX = p.TileX;
-                RearCouplerOpenShape.Location.TileZ = p.TileZ;
-
-                // Get the movement that would be needed to locate the coupler on the car if they were pointing in the default direction.
-                Vector3 displacement;
-                displacement.X = Car.RearCouplerOpenAnimWidthM;
-                displacement.Y = Car.RearCouplerOpenAnimHeightM;
-                displacement.Z = -(Car.RearCouplerOpenAnimLengthM + (Car.CarLengthM / 2.0f) + Car.RearCouplerSlackM);  // Reversed as this is the rear coupler of the wagon
-
-                // Get the orientation of the car as a quaternion
-                p.XNAMatrix.Decompose(out Vector3 scale, out Quaternion quaternion, out Vector3 translation);
-
-                // Reverse the y axis (plan view) component - perhaps because XNA is opposite to MSTS
-                var quaternionReversed = new Quaternion(quaternion.X, -quaternion.Y, quaternion.Z, quaternion.W);
-
-                // Rotate the displacement to match the orientation of the car
-                var rotatedDisplacement = Vector3.Transform(displacement, quaternionReversed);
-
-                // Apply the rotation to the coupler displacement to keep it in place with the wagon
-                RearCouplerOpenShape.Location.Location += rotatedDisplacement;
-
-                // Keep the coupler shape aligned with the wagon
-                RearCouplerOpenShape.Location.XNAMatrix.M11 = Car.WorldPosition.XNAMatrix.M11;
-                RearCouplerOpenShape.Location.XNAMatrix.M12 = Car.WorldPosition.XNAMatrix.M12;
-                RearCouplerOpenShape.Location.XNAMatrix.M13 = Car.WorldPosition.XNAMatrix.M13;
-                RearCouplerOpenShape.Location.XNAMatrix.M21 = Car.WorldPosition.XNAMatrix.M21;
-                RearCouplerOpenShape.Location.XNAMatrix.M22 = Car.WorldPosition.XNAMatrix.M22;
-                RearCouplerOpenShape.Location.XNAMatrix.M23 = Car.WorldPosition.XNAMatrix.M23;
-                RearCouplerOpenShape.Location.XNAMatrix.M31 = Car.WorldPosition.XNAMatrix.M31;
-                RearCouplerOpenShape.Location.XNAMatrix.M32 = Car.WorldPosition.XNAMatrix.M32;
-                RearCouplerOpenShape.Location.XNAMatrix.M33 = Car.WorldPosition.XNAMatrix.M33;
-
-                // Display Animation Shape                    
-                RearCouplerOpenShape.PrepareFrame(frame, elapsedTime);
-            }
-
-            // Display rear default coupler in sim, by default it will always be closed position
-            else if (RearCouplerShape != null && Car.IsAdvancedCoupler && !(Viewer.Camera.AttachedCar == this.MSTSWagon && Viewer.Camera.Style == Camera.Styles.ThreeDimCab))
-            {
-                // The following locates the coupler at the end of the car.
-                // Suitable for development but, for release, would be better to implement as a sub-object of the car object.
 
                 // Place the coupler in the centre of the car
                 var p = Car.WorldPosition; // abbreviation
@@ -890,23 +827,50 @@ namespace Orts.Viewer3D.RollingStock
 
                 // Reverse the y axis (plan view) component - perhaps because XNA is opposite to MSTS
                 var quaternionReversed = new Quaternion(quaternion.X, -quaternion.Y, quaternion.Z, quaternion.W);
+                var quaternionCar = new Quaternion(quaternion.X, quaternion.Y, quaternion.Z, quaternion.W);
+
+                Vector3 rotatedDisplacement;
 
                 // Rotate the displacement to match the orientation of the car
-                var rotatedDisplacement = Vector3.Transform(displacement, quaternionReversed);
+                rotatedDisplacement = Vector3.Transform(displacement, quaternionReversed);
 
-                // Apply the rotation to the coupler displacement to keep it in place with the wagon
+                // Apply the rotation to the coupler's displacement to swing it round to the end of the wagon
                 RearCouplerShape.Location.Location += rotatedDisplacement;
 
-                // Keep the coupler shape aligned with the wagon
-                RearCouplerShape.Location.XNAMatrix.M11 = Car.WorldPosition.XNAMatrix.M11;
-                RearCouplerShape.Location.XNAMatrix.M12 = Car.WorldPosition.XNAMatrix.M12;
-                RearCouplerShape.Location.XNAMatrix.M13 = Car.WorldPosition.XNAMatrix.M13;
-                RearCouplerShape.Location.XNAMatrix.M21 = Car.WorldPosition.XNAMatrix.M21;
-                RearCouplerShape.Location.XNAMatrix.M22 = Car.WorldPosition.XNAMatrix.M22;
-                RearCouplerShape.Location.XNAMatrix.M23 = Car.WorldPosition.XNAMatrix.M23;
-                RearCouplerShape.Location.XNAMatrix.M31 = Car.WorldPosition.XNAMatrix.M31;
-                RearCouplerShape.Location.XNAMatrix.M32 = Car.WorldPosition.XNAMatrix.M32;
-                RearCouplerShape.Location.XNAMatrix.M33 = Car.WorldPosition.XNAMatrix.M33;
+                if (Car.CarBehind != null)
+                {
+                    // Consider the orientation of the car behind
+                    var pBehind = new WorldPosition(Car.CarBehind.WorldPosition);
+                    if (Car.CarBehind.Flipped)
+                    {
+                        pBehind.XNAMatrix.M11 *= -1;
+                        pBehind.XNAMatrix.M13 *= -1;
+                        pBehind.XNAMatrix.M31 *= -1;
+                        pBehind.XNAMatrix.M33 *= -1;
+                    }
+                    // Get the orientation of the car as a quaternion
+                    pBehind.XNAMatrix.Decompose(out Vector3 scaleBehind, out Quaternion quaternionBehind, out Vector3 translationBehind);
+                    var quaternionCarBehind = new Quaternion(quaternionBehind.X, quaternionBehind.Y, quaternionBehind.Z, quaternionBehind.W);
+
+                    // Interpolate halfway (0.5) between the two cars
+                    var quaternionBehindLerp = Quaternion.Lerp(quaternionCar, quaternionCarBehind, 0.5f);
+
+                    // Rotate the coupler to align with the direction between the cars
+                    RearCouplerShape.Location.XNAMatrix = RotateCoupler(quaternionBehindLerp, RearCouplerShape.Location.XNAMatrix);
+                }
+                else
+                {
+                    // Align the coupler shape with the wagon
+                    RearCouplerShape.Location.XNAMatrix.M11 = Car.WorldPosition.XNAMatrix.M11;
+                    RearCouplerShape.Location.XNAMatrix.M12 = Car.WorldPosition.XNAMatrix.M12;
+                    RearCouplerShape.Location.XNAMatrix.M13 = Car.WorldPosition.XNAMatrix.M13;
+                    RearCouplerShape.Location.XNAMatrix.M21 = Car.WorldPosition.XNAMatrix.M21;
+                    RearCouplerShape.Location.XNAMatrix.M22 = Car.WorldPosition.XNAMatrix.M22;
+                    RearCouplerShape.Location.XNAMatrix.M23 = Car.WorldPosition.XNAMatrix.M23;
+                    RearCouplerShape.Location.XNAMatrix.M31 = Car.WorldPosition.XNAMatrix.M31;
+                    RearCouplerShape.Location.XNAMatrix.M32 = Car.WorldPosition.XNAMatrix.M32;
+                    RearCouplerShape.Location.XNAMatrix.M33 = Car.WorldPosition.XNAMatrix.M33;
+                }
 
                 // Display Animation Shape                    
                 RearCouplerShape.PrepareFrame(frame, elapsedTime);
@@ -1041,7 +1005,17 @@ namespace Orts.Viewer3D.RollingStock
 
         }
 
-
+        // Rotate the coupler to a direction given by a quaternion
+        private Matrix RotateCoupler(Quaternion quaternion, Matrix couplerMatrix)
+        {
+            // Extract the position of the object
+            var couplerPosition = couplerMatrix.Translation;
+            // Rotate the object around its origin
+            couplerMatrix = Matrix.CreateFromQuaternion(quaternion);
+            // Restore the position of the rotated object in the world
+            couplerMatrix.Translation = couplerPosition;
+            return couplerMatrix;
+        }
 
         /// <summary>
         /// Unload and release the car - its not longer being displayed
