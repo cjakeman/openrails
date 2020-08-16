@@ -926,10 +926,21 @@ namespace Orts.Viewer3D.RollingStock
         /// <returns></returns>
         private Quaternion PositionCoupler(TrainCar car, AnimatedShape couplerShape, Vector3 displacement)
         {
-            var p = car.WorldPosition; // abbreviation
+            var p = new WorldPosition(car.WorldPosition); // copy
+
             couplerShape.Location.Location = new Vector3(p.Location.X, p.Location.Y, p.Location.Z);
             couplerShape.Location.TileX = p.TileX;
             couplerShape.Location.TileZ = p.TileZ;
+
+            if (car.Flipped)
+            {
+                p.XNAMatrix.M11 *= -1;
+                p.XNAMatrix.M13 *= -1;
+                p.XNAMatrix.M21 *= -1;
+                p.XNAMatrix.M23 *= -1;
+                p.XNAMatrix.M31 *= -1;
+                p.XNAMatrix.M33 *= -1;
+            }
 
             // Get the orientation of the car as a quaternion
             p.XNAMatrix.Decompose(out Vector3 scale, out Quaternion quaternion, out Vector3 translation);
@@ -969,16 +980,32 @@ namespace Orts.Viewer3D.RollingStock
         /// <param name="couplerShape"></param>
         private void AlignCouplerWithCar(TrainCar car, AnimatedShape couplerShape)
         {
-            // Align the coupler shape with the wagon
-            couplerShape.Location.XNAMatrix.M11 = car.WorldPosition.XNAMatrix.M11;
-            couplerShape.Location.XNAMatrix.M12 = car.WorldPosition.XNAMatrix.M12;
-            couplerShape.Location.XNAMatrix.M13 = car.WorldPosition.XNAMatrix.M13;
-            couplerShape.Location.XNAMatrix.M21 = car.WorldPosition.XNAMatrix.M21;
-            couplerShape.Location.XNAMatrix.M22 = car.WorldPosition.XNAMatrix.M22;
-            couplerShape.Location.XNAMatrix.M23 = car.WorldPosition.XNAMatrix.M23;
-            couplerShape.Location.XNAMatrix.M31 = car.WorldPosition.XNAMatrix.M31;
-            couplerShape.Location.XNAMatrix.M32 = car.WorldPosition.XNAMatrix.M32;
-            couplerShape.Location.XNAMatrix.M33 = car.WorldPosition.XNAMatrix.M33;
+            if (car.Flipped)
+            {
+                // Align the coupler shape with the wagon
+                couplerShape.Location.XNAMatrix.M11 = -car.WorldPosition.XNAMatrix.M11;
+                couplerShape.Location.XNAMatrix.M12 = +car.WorldPosition.XNAMatrix.M12;
+                couplerShape.Location.XNAMatrix.M13 = -car.WorldPosition.XNAMatrix.M13;
+                couplerShape.Location.XNAMatrix.M21 = -car.WorldPosition.XNAMatrix.M21;
+                couplerShape.Location.XNAMatrix.M22 = +car.WorldPosition.XNAMatrix.M22;
+                couplerShape.Location.XNAMatrix.M23 = -car.WorldPosition.XNAMatrix.M23;
+                couplerShape.Location.XNAMatrix.M31 = -car.WorldPosition.XNAMatrix.M31;
+                couplerShape.Location.XNAMatrix.M32 = +car.WorldPosition.XNAMatrix.M32;
+                couplerShape.Location.XNAMatrix.M33 = -car.WorldPosition.XNAMatrix.M33;
+            }
+            else
+            {
+                // Align the coupler shape with the wagon
+                couplerShape.Location.XNAMatrix.M11 = car.WorldPosition.XNAMatrix.M11;
+                couplerShape.Location.XNAMatrix.M12 = car.WorldPosition.XNAMatrix.M12;
+                couplerShape.Location.XNAMatrix.M13 = car.WorldPosition.XNAMatrix.M13;
+                couplerShape.Location.XNAMatrix.M21 = car.WorldPosition.XNAMatrix.M21;
+                couplerShape.Location.XNAMatrix.M22 = car.WorldPosition.XNAMatrix.M22;
+                couplerShape.Location.XNAMatrix.M23 = car.WorldPosition.XNAMatrix.M23;
+                couplerShape.Location.XNAMatrix.M31 = car.WorldPosition.XNAMatrix.M31;
+                couplerShape.Location.XNAMatrix.M32 = car.WorldPosition.XNAMatrix.M32;
+                couplerShape.Location.XNAMatrix.M33 = car.WorldPosition.XNAMatrix.M33;
+            }
         }
 
         /// <summary>
