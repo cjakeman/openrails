@@ -47,6 +47,7 @@ namespace Orts.Formats.OR
     {
         public List<TrainInformation> Trains = new List<TrainInformation>();
         public String Description;
+        public String Briefing = string.Empty;
 
         private String Separator;
 
@@ -123,10 +124,11 @@ namespace Orts.Formats.OR
             bool pathFound = false;
             bool consistFound = false;
             bool startFound = false;
+            bool briefingFound = false;
 
             readLine = scrStream.ReadLine();
 
-            while (readLine != null && (!descFound || !pathFound || !consistFound || !startFound))
+            while ( readLine != null && (!descFound || !pathFound || !consistFound || !startFound || !briefingFound) )
             {
                 Parts = readLine.Split(SeparatorArray, System.StringSplitOptions.None);
 
@@ -138,19 +140,15 @@ namespace Orts.Formats.OR
                         descFound = true;
                     }
                 }
-
                 if (!pathFound)
                 {
                     if (String.Compare(Parts[0].Trim().Substring(0,5), "#path", true) == 0)
                     {
                         pathFound = true;
                         foreach (TrainInformation train in Trains)
-                        {
                             train.Path = String.Copy(Parts[train.Column]);
-                        }
                     }
                 }
-
                 if (!consistFound)
                 {
                     if (String.Compare(Parts[0], "#consist", true) == 0)
@@ -163,16 +161,23 @@ namespace Orts.Formats.OR
                         }
                     }
                 }
-
                 if (!startFound)
                 {
                     if (String.Compare(Parts[0], "#start", true) == 0)
                     {
                         startFound = true;
                         foreach (TrainInformation train in Trains)
-                        {
                             train.StartTime = String.Copy(Parts[train.Column]);
-                        }
+                    }
+                }
+                if (!briefingFound)
+                {
+                    if (String.Compare(Parts[0], "#briefing", true) == 0)
+                    {
+                        briefingFound = true;
+                        Briefing = String.Copy(Parts[1]);
+                        foreach (TrainInformation train in Trains)
+                            train.Briefing = String.Copy(Parts[train.Column]).Replace("<br>", "\n");
                     }
                 }
 
@@ -258,6 +263,7 @@ namespace Orts.Formats.OR
             public bool ReverseConsist = false;       // use consist in reverse
             public string Path;               // path definition
             public string StartTime;          // starttime definition
+            public string Briefing;
 
             GettextResourceManager Catalog = new GettextResourceManager("Orts.Formats.OR");
 
@@ -268,6 +274,7 @@ namespace Orts.Formats.OR
                 Consist = string.Empty;
                 LeadingConsist = string.Empty;
                 Path = string.Empty;
+                Briefing = string.Empty;
             }
 
             public int CompareTo(TrainInformation otherInfo)

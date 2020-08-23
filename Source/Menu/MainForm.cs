@@ -1158,28 +1158,26 @@ namespace ORTS
             if (radioButtonModeTimetable.Checked)
             {
                 if (SelectedTimetableSet != null)
-                {
                     ShowDetail(catalog.GetStringFmt("Timetable set: {0}", SelectedTimetableSet), new string[0]);
-                }
+                    // Description not shown as no description is available for a timetable set.
+
                 if (SelectedTimetable != null)
-                {
-                    ShowDetail(catalog.GetStringFmt("Timetable: {0}", SelectedTimetable), new string[0]);
-                }
+                    ShowDetail(catalog.GetStringFmt($"Timetable: {SelectedTimetable}"), SelectedTimetable.Briefing.Split('\n'));
+
                 if (SelectedTimetableTrain != null)
                 {
-                    ShowDetail(catalog.GetStringFmt("Train: {0}", SelectedTimetableTrain), SelectedTimetableTrain.ToInfo());
+                    var selectedTimetableTrainDescription = new string[2];
+                    selectedTimetableTrainDescription[0] = SelectedTimetableTrain.Briefing;
+
+                    ShowDetail(catalog.GetStringFmt($"Train: {SelectedTimetableTrain}"), selectedTimetableTrainDescription);
                     if (SelectedTimetableConsist != null)
                     {
                         ShowDetail(catalog.GetStringFmt("Consist: {0}", SelectedTimetableConsist.Name), new string[0]);
                         if (SelectedTimetableConsist.Locomotive != null && SelectedTimetableConsist.Locomotive.Description != null)
-                        {
                             ShowDetail(catalog.GetStringFmt("Locomotive: {0}", SelectedTimetableConsist.Locomotive.Name), SelectedTimetableConsist.Locomotive.Description.Split('\n'));
-                        }
                     }
                     if (SelectedTimetablePath != null)
-                    {
                         ShowDetail(catalog.GetStringFmt("Path: {0}", SelectedTimetablePath.Name), SelectedTimetablePath.ToInfo());
-                    }
                 }
             }
 
