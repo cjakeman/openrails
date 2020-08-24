@@ -48,10 +48,12 @@ namespace Orts.Simulation.Timetables
 {
     public class TTTrain : AITrain
     {
-        public float DefMaxDecelMpSSP = 1.0f;               // maximum decelleration
-        public float DefMaxAccelMpSSP = 1.0f;               // maximum accelleration
-        public float DefMaxDecelMpSSF = 0.8f;               // maximum decelleration
-        public float DefMaxAccelMpSSF = 0.5f;               // maximum accelleration
+        public string Briefing = "";
+
+        public float DefMaxDecelMpSSP = 1.0f;               // maximum deceleration
+        public float DefMaxAccelMpSSP = 1.0f;               // maximum acceleration
+        public float DefMaxDecelMpSSF = 0.8f;               // maximum deceleration
+        public float DefMaxAccelMpSSF = 0.5f;               // maximum acceleration
 
         public bool Closeup = false;                           // closeup to other train when stabling
         public static float keepDistanceCloseupM = 2.5f;       // stay 2.5m from end of route when closeup required (for stabling only)

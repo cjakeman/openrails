@@ -245,81 +245,86 @@ namespace Orts.Simulation.Physics
         public float allowedAbsoluteMaxSpeedLimitMpS;    // Max speed as set by limit independently from train features
         public float allowedAbsoluteMaxTempSpeedLimitMpS;    // Max speed as set by temp speed limit independently from train features
         public float minCheckDistanceManualM = 3000;     // minimum distance to check ahead in manual mode
-        public float CheckDistanceM
-        {
-            get
-            {
-                float checkDistanceM = 3000f; // Default value
-                int signalsFound = 0;
-                bool forward = MUDirection != Direction.Reverse;
 
-                SignalObject nextSignal;
-                TCPosition position;
-                if (forward)
-                {
-                    nextSignal = NextSignalObject[0];
+        // See "D:\data\OneDrive\Open Rails\Code\support for Rick Loader\Problem with XNA Master.xlsx"
+        //public float CheckDistanceM
+        //{
+        //    get
+        //    {
+        //        float checkDistanceM = 3000f; // Default value
+        //        int signalsFound = 0;
+        //        bool forward = MUDirection != Direction.Reverse;
 
-                    position = PresentPosition[0];
-                }
-                else
-                {
-                    nextSignal = NextSignalObject[1];
+        //        SignalObject nextSignal;
+        //        TCPosition position;
+        //        if (forward)
+        //        {
+        //            nextSignal = NextSignalObject[0];
 
-                    // PresentPosition[1]'s direction must be inverted in order to make the ScanRoute function work properly
-                    position = new TCPosition();
-                    PresentPosition[1].CopyTo(ref position);
-                    position.TCDirection = position.TCDirection == 0 ? 1 : 0;
-                }
+        //            position = PresentPosition[0];
+        //        }
+        //        else
+        //        {
+        //            nextSignal = NextSignalObject[1];
 
-                int signalNumClearAhead = 0;
-                if (nextSignal != null)
-                {
-                    signalNumClearAhead = nextSignal.SignalNumClearAheadActive > -2 ? nextSignal.SignalNumClearAheadActive : nextSignal.SignalNumClearAhead_MSTS;
-                }
+        //            // PresentPosition[1]'s direction must be inverted in order to make the ScanRoute function work properly
+        //            position = new TCPosition();
+        //            PresentPosition[1].CopyTo(ref position);
+        //            position.TCDirection = position.TCDirection == 0 ? 1 : 0;
+        //        }
 
-                float offset = position.TCOffset;
-                float sectionStart = -offset;
+        //        int signalNumClearAhead = 0;
+        //        if (nextSignal != null)
+        //        {
+        //            signalNumClearAhead = nextSignal.SignalNumClearAheadActive > -2 ? nextSignal.SignalNumClearAheadActive : nextSignal.SignalNumClearAhead_MSTS;
+        //        }
 
-                // Get all track circuit sections in front of the train
-                List<int> sectionIndexes = signalRef.ScanRoute(this, position.TCSectionIndex, position.TCOffset,
-                        position.TCDirection, true, -1, true, false,
-                        false, false, true, false, false, false, false, IsFreight);
-                List<TrackCircuitSection> sections = new List<TrackCircuitSection>();
+        //        float offset = position.TCOffset;
+        //        float sectionStart = -offset;
 
-                if (sectionIndexes.Count > 0)
-                {
-                    int prevSection = -2;    // preset to invalid
+        //        // Get all track circuit sections in front of the train
+        //        List<int> sectionIndexes = signalRef.ScanRoute(this, position.TCSectionIndex, position.TCOffset,
+        //                position.TCDirection, true, -1, true, false,
+        //                false, false, true, false, false, false, false, IsFreight);
+        //        List<TrackCircuitSection> sections = new List<TrackCircuitSection>();
 
-                    foreach (int sectionIndex in sectionIndexes)
-                    {
-                        int sectionDirection = sectionIndex > 0 ? 0 : 1;
+        //        if (sectionIndexes.Count > 0)
+        //        {
+        //            int prevSection = -2;    // preset to invalid
 
-                        TrackCircuitSection section = signalRef.TrackCircuitList[Math.Abs(sectionIndex)];
-                        TCRouteElement element = new TCRouteElement(section, sectionDirection, signalRef, prevSection);
-                        sections.Add(section);
+        //            foreach (int sectionIndex in sectionIndexes)
+        //            {
+        //                int sectionDirection = sectionIndex > 0 ? 0 : 1;
 
-                        SignalObject signal = section.EndSignals[sectionDirection];
-                        if (signal != null && signal.isSignalNormal())
-                        {
-                            checkDistanceM = sectionStart + section.Length;
+        //                TrackCircuitSection section = signalRef.TrackCircuitList[Math.Abs(sectionIndex)];
+        //                TCRouteElement element = new TCRouteElement(section, sectionDirection, signalRef, prevSection);
+        //                sections.Add(section);
 
-                            if (signal != nextSignal) // In order not to count the signal that we took the SNCA value from
-                            {
-                                if (++signalsFound >= signalNumClearAhead + 1) // We have to go to the signal after the nth normal signal so that the route is set for the nth signal
-                                {
-                                    break;
-                                }
-                            }
-                        }
+        //                SignalObject signal = section.EndSignals[sectionDirection];
+        //                if (signal != null && signal.isSignalNormal())
+        //                {
+        //                    checkDistanceM = sectionStart + section.Length;
 
-                        sectionStart += section.Length;
-                        prevSection = Math.Abs(sectionIndex);
-                    }
-                }
+        //                    if (signal != nextSignal) // In order not to count the signal that we took the SNCA value from
+        //                    {
+        //                        if (++signalsFound >= signalNumClearAhead + 1) // We have to go to the signal after the nth normal signal so that the route is set for the nth signal
+        //                        {
+        //                            break;
+        //                        }
+        //                    }
+        //                }
 
-                return checkDistanceM;
-            }
-        }
+        //                sectionStart += section.Length;
+        //                prevSection = Math.Abs(sectionIndex);
+        //            }
+        //        }
+
+        //        return checkDistanceM;
+        //    }
+        //}
+        public float maxTimeS = 120;                     // check ahead for distance covered in 2 mins.
+        public float minCheckDistanceM = 5000;           // minimum distance to check ahead
+        public float CheckDistanceM => Math.Max(AllowedMaxSpeedMpS * maxTimeS, minCheckDistanceM);
 
         public float standardOverlapM = 15.0f;           // standard overlap on clearing sections
         public float junctionOverlapM = 75.0f;           // standard overlap on clearing sections
