@@ -587,6 +587,9 @@ namespace ORTS
 
         void buttonStart_Click(object sender, EventArgs e)
         {
+            if (PlayerLocoExists() == false)
+                return;
+
             SaveOptions();
 
             if (radioButtonModeActivity.Checked)
@@ -656,6 +659,23 @@ namespace ORTS
             DialogResult = DialogResult.OK;
         }
 
+        private bool PlayerLocoExists()
+        {
+            var locoPath = SelectedConsist.Locomotive.FilePath;
+            if (File.Exists(locoPath))
+                return true;
+            else
+            {
+                var errorSummary = $"The player locomotive file cannot be found at {locoPath}";
+                var openTracker = MessageBox.Show(String.Format(
+                    $"A fatal error has occured and {Application.ProductName} cannot continue.\n\n" +
+                    $"{errorSummary}\n\n" +
+                    "This error is due to bad content or content that was not installed correctly.\n\n" +
+                    "Return to the Menu and choose a different consist."),
+                    Application.ProductName + " " + VersionInfo.VersionOrBuild, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
         #endregion
 
         #region Options
@@ -1236,7 +1256,7 @@ namespace ORTS
             summaryControl.Width = panelDetails.ClientSize.Width - summaryControl.Margin.Horizontal;
             summaryControl.Height = TextRenderer.MeasureText("1\n2\n3\n4\n5", summaryControl.Font).Height;
 
-            // Find out where we need to cut the text to make the summary 5 lines long. Uses a binaty search to find the cut point.
+            // Find out where we need to cut the text to make the summary 5 lines long. Uses a binary search to find the cut point.
             var size = MeasureText(summaryControl.Text, summaryControl);
             if (size > summaryControl.Height)
             {
