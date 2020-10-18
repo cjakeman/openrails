@@ -28,7 +28,7 @@ namespace Orts.Parsers.OR
     /// </summary>
     public class TimetableReader
     {
-        public List<string[]> Strings = new List<string[]>();
+        public List<String[]> Strings = new List<String[]>();
         public string FilePath;
 
         public TimetableReader(string filePath)
@@ -52,7 +52,12 @@ namespace Orts.Parsers.OR
                 // extract and store all strings
                 do
                 {
-                    Strings.Add(readLine.Split(separator[0]));
+                    //Strings.Add(readLine.Split(separator[0]));
+                    var lineElements = readLine.Split(separator[0]);
+                    for (var i = 0; i < lineElements.Count(); i++)
+                        lineElements[i] = lineElements[i].Trim();
+                    Strings.Add(lineElements);
+
                     readLine = filestream.ReadLine();
                 } while (readLine != null);
             }

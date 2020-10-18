@@ -1065,6 +1065,9 @@ namespace Orts.Simulation.AIs
 
         private bool AddToWorldTT(TTTrain thisTrain, List<TTTrain> nextTrains)
         {
+            Trace.WriteLine($"clockTime {clockTime} AI.AddToWorldTT: thisTrain.Name = {thisTrain.Name}");
+
+
             bool endPreRun = false;
             bool validPosition = true;
             Train.TCSubpathRoute tempRoute = null;
