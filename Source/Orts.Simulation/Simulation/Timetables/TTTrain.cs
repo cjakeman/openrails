@@ -2568,6 +2568,9 @@ namespace Orts.Simulation.Timetables
 
         public override void AIPreUpdate(float elapsedClockSeconds)
         {
+            //CJ
+            var oldState = this.MovementState;
+
             // calculate delta speed and speed
             float distanceM = physicsPreUpdate(elapsedClockSeconds);
 
@@ -2644,6 +2647,19 @@ namespace Orts.Simulation.Timetables
                 }
 
             }
+
+            //CJ
+            if (this.MovementState != oldState)
+            {
+                if (Number == 105)
+                {
+                    Console.WriteLine($"clockTime {AI.clockTime:F1} train {Number} {oldState} => {MovementState}");
+                }
+            }
+                if (Number == 105)
+                {
+                    Console.WriteLine($"clockTime {AI.clockTime:F1} PresentPosition[0].RouteListIndex = {PresentPosition[0].RouteListIndex}");
+                }
         }
 
         //================================================================================================//
@@ -3990,7 +4006,10 @@ namespace Orts.Simulation.Timetables
                     thisStation.Passed = true;
 
                     MovementState = AI_MOVEMENT_STATE.STOPPED;   // if state is still station_stop and ready and allowed to depart - change to stop to check action
-                    RestdelayS = (float)DelayedStartSettings.stationRestart.fixedPartS + ((float)Simulator.Random.Next(DelayedStartSettings.stationRestart.randomPartS * 10) / 10f);
+
+                    //RestdelayS = (float)DelayedStartSettings.stationRestart.fixedPartS + ((float)Simulator.Random.Next(DelayedStartSettings.stationRestart.randomPartS * 10) / 10f);
+                    RestdelayS = (float)DelayedStartSettings.stationRestart.fixedPartS;
+
                     if (!endOfPath[0])
                     {
                         removeStation = true;  // set next station if not at end of path
@@ -5785,7 +5804,8 @@ namespace Orts.Simulation.Timetables
             }
 
             float randDelay = (float)Simulator.Random.Next(randDelayPart);
-            RestdelayS += (baseDelayPart + (randDelay / 10f));
+            //RestdelayS += (baseDelayPart + (randDelay / 10f));
+            RestdelayS += baseDelayPart;
             DelayedStart = true;
             DelayedStartState = reason;
 
@@ -9105,6 +9125,14 @@ namespace Orts.Simulation.Timetables
         {
             bool[] returnValue = new bool[2] { false, true };
 
+            //CJ
+            if (PresentPosition[0].RouteListIndex < 0)
+            {
+                Console.WriteLine($"ProcessEndOfPath: PresentPosition[0].RouteListIndex < 0 train: {Number}");
+                throw new Exception();
+            }
+
+
             int directionNow = ValidRoute[0][PresentPosition[0].RouteListIndex].Direction;
             int positionNow = ValidRoute[0][PresentPosition[0].RouteListIndex].TCSectionIndex;
 
@@ -11915,7 +11943,8 @@ namespace Orts.Simulation.Timetables
             if (!AtStation && !attachTrain.AtStation)
             {
                 float randDelay = (float)Simulator.Random.Next((DelayedStartSettings.attachRestart.randomPartS * 10));
-                RestdelayS = DelayedStartSettings.attachRestart.fixedPartS + (randDelay / 10f);
+                //RestdelayS = DelayedStartSettings.attachRestart.fixedPartS + (randDelay / 10f);
+                RestdelayS = DelayedStartSettings.attachRestart.fixedPartS;
                 DelayedStart = true;
                 DelayedStartState = AI_START_MOVEMENT.PATH_ACTION;
             }
@@ -12059,7 +12088,8 @@ namespace Orts.Simulation.Timetables
 
             // set delay
             float randDelay = (float)Simulator.Random.Next((DelayedStartSettings.detachRestart.randomPartS * 10));
-            RestdelayS = DelayedStartSettings.detachRestart.fixedPartS + (randDelay / 10f);
+            //RestdelayS = DelayedStartSettings.detachRestart.fixedPartS + (randDelay / 10f);
+            RestdelayS = DelayedStartSettings.detachRestart.fixedPartS;
             DelayedStart = true;
             DelayedStartState = AI_START_MOVEMENT.NEW;
 
@@ -12194,7 +12224,8 @@ namespace Orts.Simulation.Timetables
             if (MovementState == AI_MOVEMENT_STATE.STOPPED)
             {
                 randDelay = (float)Simulator.Random.Next((DelayedStartSettings.detachRestart.randomPartS * 10));
-                RestdelayS = DelayedStartSettings.detachRestart.fixedPartS + (randDelay / 10f);
+                //RestdelayS = DelayedStartSettings.detachRestart.fixedPartS + (randDelay / 10f);
+                RestdelayS = DelayedStartSettings.detachRestart.fixedPartS;
                 DelayedStart = true;
                 DelayedStartState = AI_START_MOVEMENT.PATH_ACTION;
             }

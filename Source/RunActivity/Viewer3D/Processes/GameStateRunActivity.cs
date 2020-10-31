@@ -1044,6 +1044,14 @@ namespace Orts.Viewer3D.Processes
                         Simulator.TimetableFileName = System.IO.Path.GetFileNameWithoutExtension(args[0]);
                         Simulator.PathName = String.Copy(args[1]);
                     }
+
+                    //CJ
+                    if (args.Length > 6 )
+                        if (double.TryParse(args[6], out double timetablePeriodS))
+                            Simulator.TimetablePeriodS = timetablePeriodS;
+                        else
+                            Trace.TraceWarning($"Cannot parse {args[6]} as timetablePeriodS. Default value {Simulator.TimetablePeriodS} seconds used.");
+
                     break;
             }
 
