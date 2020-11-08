@@ -2569,6 +2569,15 @@ namespace Orts.Simulation.Timetables
         public override void AIPreUpdate(float elapsedClockSeconds)
         {
             //CJ
+            //CJ
+            if (Number == 105)
+            {
+                Console.WriteLine($"train.Number {this.Number} {AI.clockTime} {DistanceTravelledM}");
+            }
+            if (AI.clockTime >= 3426 && this.Number == 105)
+            {
+                Console.WriteLine($"train.Number {this.Number} {this.PresentPosition[0].RouteListIndex}");
+            }
             var oldState = this.MovementState;
 
             // calculate delta speed and speed

@@ -368,7 +368,8 @@ namespace Orts.Simulation.AIs
             float firstAITime = StartList.GetNextTime();
             if (firstAITime > 0 && firstAITime < Simulator.ClockTime)
             {
-               Console.WriteLine("\n Run AI : " + StartList.Count.ToString() + " ");
+                //CJ
+               //Console.WriteLine("\n Run AI : " + StartList.Count.ToString() + " ");
 
                 // perform update for AI trains upto actual start time
 
@@ -378,7 +379,7 @@ namespace Orts.Simulation.AIs
                 bool activeTrains = false;
 
                 //CJ
-                Console.WriteLine("Initial time = {0} ({1:u})", DateTime.Now, DateTime.UtcNow);
+                //Console.WriteLine("Initial time = {0} ({1:u})", DateTime.Now, DateTime.UtcNow);
                 //for (double runTime = firstAITime; runTime < Simulator.ClockTime && !endPreRun; runTime += 5.0) // update with 5 secs interval
                 for (double runTime = firstAITime; runTime < Simulator.ClockTime && !endPreRun; runTime += Simulator.TimetablePeriodS) // update with 5 secs interval
                 {
@@ -842,16 +843,20 @@ namespace Orts.Simulation.AIs
                     }
                 }
 
-                var myTrain = AITrains.Where(r => r.Number == 105).SingleOrDefault();
-                var i = AITrains.FindIndex(r => r.Number == 105);
+                //CJ
+                //var myTrain = AITrains.Where(r => r.Number == 105).SingleOrDefault();
+                //var i = AITrains.FindIndex(r => r.Number == 105);
+
+                //CJ
+                //Console.WriteLine($"{clockTime}");
 
                 foreach (var train in AITrains)
                 {
                     //CJ
-                    if (clockTime >= 3421)
-                    {
-                        Console.WriteLine($"before train.Number {train.Number} i {i} {myTrain.PresentPosition[0].RouteListIndex}");
-                    }
+                    //if (clockTime >= 3426 && i == 199 && train.Number == 105)
+                    //{
+                    //    Console.WriteLine($"before train.Number {train.Number} i {i} {myTrain.PresentPosition[0].RouteListIndex}");
+                    //}
 
 
                     if (train.TrainType != Train.TRAINTYPE.PLAYER && train.TrainType != Train.TRAINTYPE.INTENDED_PLAYER)
@@ -871,7 +876,14 @@ namespace Orts.Simulation.AIs
                         int presentTime = Convert.ToInt32(Math.Floor(clockTime));
                         trainTT.UpdateAIStaticState(presentTime);
                     }
+
+                    //CJ
+                    //if (clockTime >= 3426)
+                    //{
+                    //    Console.WriteLine($"after train.Number {train.Number} i {i} {myTrain.PresentPosition[0].RouteListIndex}");
+                    //}
                 }
+
 
                 RemoveTrains();
                 RemoveFromAITrains();

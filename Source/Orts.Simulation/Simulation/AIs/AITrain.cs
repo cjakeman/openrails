@@ -607,7 +607,7 @@ namespace Orts.Simulation.AIs
         public void AIUpdate(float elapsedClockSeconds, double clockTime, bool preUpdate)
         {
             //CJ
-            if (Number == 105 && clockTime >= 3421)
+            if (Number == 105 && AI.clockTime >= 3426)
             {
                 Console.WriteLine($"clockTime = {clockTime}, MovementState = {MovementState}, ValidRoute[0].Count = {ValidRoute[0].Count}");
             }
