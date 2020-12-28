@@ -7900,6 +7900,18 @@ namespace Orts.Simulation.Timetables
                                 }
                             }
                         }
+
+                        //CJ
+                        if (Number == 105)
+                        {
+                            foreach(var n in fullpath.Nodes)
+                            {
+                                Console.WriteLine($"{n.ID} {n.Index} {n.Type} {n.NextMainNode}");
+                            }
+                        }
+
+
+
                     }
                     break;
 
@@ -9138,6 +9150,10 @@ namespace Orts.Simulation.Timetables
             if (PresentPosition[0].RouteListIndex < 0)
             {
                 Console.WriteLine($"ProcessEndOfPath: PresentPosition[0].RouteListIndex < 0 train: {Number}");
+
+
+
+
                 throw new Exception();
             }
 

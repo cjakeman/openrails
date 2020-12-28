@@ -88,6 +88,10 @@ namespace Orts.Simulation.AIs
                     simulator.Activity.Tr_Activity.Tr_Activity_File.Traffic_Definition.TrafficFile.TrafficDefinition, simulator.TimetableMode);
                     if (cancellation.IsCancellationRequested) // ping loader watchdog
                         return;
+
+                    //CJ
+                    Console.WriteLine($"AITrain: {train.Number} {train.Name}");
+
                 }
             }
 
@@ -140,6 +144,24 @@ namespace Orts.Simulation.AIs
                     StartList.InsertTrain(train);
                     Simulator.StartReference.Add(train.Number);
                 }
+
+
+                //CJ
+                if (train.Number == 105)
+                {
+                    foreach(var n in train.Path.Nodes)
+                    {
+                        Console.WriteLine($"{n.ID} {n.Index} {n.Location.TileX} {n.Location.TileY} {n.Location.Location.X} {n.Location.Location.Z}");
+                    }
+                    foreach(var sp in train.TCRoute.TCRouteSubpaths)
+                    {
+                        foreach(var re in sp)
+                        {
+                            Console.WriteLine($"{re.TCSectionIndex} {re.Direction} {re.OutPin[0]}, {re.OutPin[1]})");
+                        }
+                    }
+                }
+
             }
 
             // clear dictionary (no trains yet exist)
