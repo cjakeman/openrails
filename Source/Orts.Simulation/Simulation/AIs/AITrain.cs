@@ -28,7 +28,7 @@
 // #define DEBUG_TRACEINFO
 // DEBUG flag for debug prints
 
-using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 using Orts.Formats.Msts;
 using Orts.Formats.OR;
 using Orts.MultiPlayer;
@@ -707,14 +707,15 @@ namespace Orts.Simulation.AIs
                 try
                 {
                     MSTSLocomotive leadingloco = Cars[0] as MSTSLocomotive;
-                    if (Simulator.Weather.PricipitationIntensityPPSPM2 > 0 && !leadingloco.Wiper)
-                    {
-                        leadingloco.SignalEvent(Event.WiperOn);
-                    }
-                    else if (Simulator.Weather.PricipitationIntensityPPSPM2 == 0 && leadingloco.Wiper)
-                    {
-                        leadingloco.SignalEvent(Event.WiperOff);
-                    }
+                    if (leadingloco != null)
+                        if (Simulator.Weather.PricipitationIntensityPPSPM2 > 0 && !leadingloco.Wiper)
+                        {
+                            leadingloco.SignalEvent(Event.WiperOn);
+                        }
+                        else if (Simulator.Weather.PricipitationIntensityPPSPM2 == 0 && leadingloco.Wiper)
+                        {
+                            leadingloco.SignalEvent(Event.WiperOff);
+                        }
                 }
                 catch
                 { } // dummy catch
