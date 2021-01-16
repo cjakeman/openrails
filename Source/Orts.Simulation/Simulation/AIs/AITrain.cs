@@ -47,6 +47,15 @@ namespace Orts.Simulation.AIs
 {
     public class AITrain : Train
     {
+        //CJ
+        public float OldDistanceTravelledM;
+        public double OldClockTime;
+        public double OldOldClockTime;
+        public double OldSpeedMpS;
+        public double OldAccelMpS2;
+
+
+
         public int UiD;
         public AIPath Path;
 
@@ -606,11 +615,6 @@ namespace Orts.Simulation.AIs
 
         public void AIUpdate(float elapsedClockSeconds, double clockTime, bool preUpdate)
         {
-            //CJ
-            if (Number == 105 && AI.clockTime >= 3426)
-            {
-                Console.WriteLine($"clockTime = {clockTime}, MovementState = {MovementState}, ValidRoute[0].Count = {ValidRoute[0].Count}");
-            }
 #if DEBUG_CHECKTRAIN
             if (!CheckTrain)
             {

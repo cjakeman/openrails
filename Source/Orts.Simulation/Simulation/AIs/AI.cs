@@ -88,10 +88,6 @@ namespace Orts.Simulation.AIs
                     simulator.Activity.Tr_Activity.Tr_Activity_File.Traffic_Definition.TrafficFile.TrafficDefinition, simulator.TimetableMode);
                     if (cancellation.IsCancellationRequested) // ping loader watchdog
                         return;
-
-                    //CJ
-                    Console.WriteLine($"AITrain: {train.Number} {train.Name}");
-
                 }
             }
 
@@ -146,21 +142,21 @@ namespace Orts.Simulation.AIs
                 }
 
 
-                //CJ
-                if (train.Number == 105)
-                {
-                    foreach(var n in train.Path.Nodes)
-                    {
-                        Console.WriteLine($"{n.ID} {n.Index} {n.Location.TileX} {n.Location.TileY} {n.Location.Location.X} {n.Location.Location.Z}");
-                    }
-                    foreach(var sp in train.TCRoute.TCRouteSubpaths)
-                    {
-                        foreach(var re in sp)
-                        {
-                            Console.WriteLine($"{re.TCSectionIndex} {re.Direction} {re.OutPin[0]}, {re.OutPin[1]})");
-                        }
-                    }
-                }
+                ////CJ
+                //if (train.Number == 105)
+                //{
+                //    foreach(var n in train.Path.Nodes)
+                //    {
+                //        Console.WriteLine($"{n.ID} {n.Index} {n.Location.TileX} {n.Location.TileZ} {n.Location.Location.X} {n.Location.Location.Z}");
+                //    }
+                //    foreach(var sp in train.TCRoute.TCRouteSubpaths)
+                //    {
+                //        foreach(var re in sp)
+                //        {
+                //            Console.WriteLine($"{re.TCSectionIndex} {re.Direction} {re.OutPin[0]}, {re.OutPin[1]})");
+                //        }
+                //    }
+                //}
 
             }
 
@@ -390,9 +386,6 @@ namespace Orts.Simulation.AIs
             float firstAITime = StartList.GetNextTime();
             if (firstAITime > 0 && firstAITime < Simulator.ClockTime)
             {
-                //CJ
-               //Console.WriteLine("\n Run AI : " + StartList.Count.ToString() + " ");
-
                 // perform update for AI trains upto actual start time
 
                 clockTime = firstAITime - 1.0f;
@@ -403,20 +396,39 @@ namespace Orts.Simulation.AIs
                 //CJ
                 //Console.WriteLine("Initial time = {0} ({1:u})", DateTime.Now, DateTime.UtcNow);
                 //for (double runTime = firstAITime; runTime < Simulator.ClockTime && !endPreRun; runTime += 5.0) // update with 5 secs interval
-                for (double runTime = firstAITime; runTime < Simulator.ClockTime && !endPreRun; runTime += Simulator.TimetablePeriodS) // update with 5 secs interval
+                //for (double runTime = firstAITime; runTime < Simulator.ClockTime && !endPreRun; runTime += Simulator.TimetablePeriodS) // update with 5 secs interval
+                //{
+                //    int fullsec = Convert.ToInt32(runTime);
+                //    if (fullsec % 3600 < 5) Trace.Write(" " + (fullsec / 3600).ToString("00") + ":00 ");
+
+                //    endPreRun = AITTUpdate((float)(runTime - clockTime), PreUpdate, ref activeTrains);
+
+                //    if (activeTrains)
+                //    {
+                //        Simulator.Signals.Update(true);
+                //    }
+
+                //    clockTime = runTime;
+                //    if (cancellation.IsCancellationRequested) return; // ping watchdog process
+                //}
+
+                double runTime1 = firstAITime;
+                while ( runTime1 < Simulator.ClockTime && !endPreRun) // update with 5 secs interval
                 {
-                    int fullsec = Convert.ToInt32(runTime);
+                    int fullsec = Convert.ToInt32(runTime1);
                     if (fullsec % 3600 < 5) Trace.Write(" " + (fullsec / 3600).ToString("00") + ":00 ");
 
-                    endPreRun = AITTUpdate((float)(runTime - clockTime), PreUpdate, ref activeTrains);
+                    endPreRun = AITTUpdate((float)(runTime1 - clockTime), PreUpdate, ref activeTrains);
 
                     if (activeTrains)
                     {
                         Simulator.Signals.Update(true);
                     }
 
-                    clockTime = runTime;
+                    clockTime = runTime1;
                     if (cancellation.IsCancellationRequested) return; // ping watchdog process
+
+                    runTime1 += Simulator.TimetablePeriodS;
                 }
 
                 // prerun finished - check if train from which player train originates has run and is finished
@@ -865,22 +877,8 @@ namespace Orts.Simulation.AIs
                     }
                 }
 
-                //CJ
-                //var myTrain = AITrains.Where(r => r.Number == 105).SingleOrDefault();
-                //var i = AITrains.FindIndex(r => r.Number == 105);
-
-                //CJ
-                //Console.WriteLine($"{clockTime}");
-
                 foreach (var train in AITrains)
                 {
-                    //CJ
-                    //if (clockTime >= 3426 && i == 199 && train.Number == 105)
-                    //{
-                    //    Console.WriteLine($"before train.Number {train.Number} i {i} {myTrain.PresentPosition[0].RouteListIndex}");
-                    //}
-
-
                     if (train.TrainType != Train.TRAINTYPE.PLAYER && train.TrainType != Train.TRAINTYPE.INTENDED_PLAYER)
                     {
                         if (train.Cars.Count == 0 || train.Cars[0].Train != train)
@@ -898,14 +896,7 @@ namespace Orts.Simulation.AIs
                         int presentTime = Convert.ToInt32(Math.Floor(clockTime));
                         trainTT.UpdateAIStaticState(presentTime);
                     }
-
-                    //CJ
-                    //if (clockTime >= 3426)
-                    //{
-                    //    Console.WriteLine($"after train.Number {train.Number} i {i} {myTrain.PresentPosition[0].RouteListIndex}");
-                    //}
                 }
-
 
                 RemoveTrains();
                 RemoveFromAITrains();
@@ -1173,9 +1164,6 @@ namespace Orts.Simulation.AIs
 
         private bool AddToWorldTT(TTTrain thisTrain, List<TTTrain> nextTrains)
         {
-            //CJ
-            //Console.WriteLine($"clockTime {clockTime:F1} AI.AddToWorldTT: thisTrain.Name = {thisTrain.Name}");
-
             bool endPreRun = false;
             bool validPosition = true;
             Train.TCSubpathRoute tempRoute = null;

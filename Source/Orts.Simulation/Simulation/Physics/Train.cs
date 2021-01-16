@@ -405,7 +405,11 @@ namespace Orts.Simulation.Physics
             new Dictionary<int, List<Dictionary<int, int>>>();
 
         // Logging and debugging info
-        public bool CheckTrain;                          // debug print required
+        //public bool CheckTrain;                          // debug print required
+
+        //CJ
+        public bool CheckTrain = false;                          // debug print required
+
         private static int lastSpeedLog;                 // last speedlog time
         public bool DatalogTrainSpeed;                   // logging of train speed required
         public int DatalogTSInterval;                    // logging interval
@@ -550,12 +554,6 @@ namespace Orts.Simulation.Physics
             routedForward = new TrainRouted(this, 0);
             routedBackward = new TrainRouted(this, 1);
             AuxActionsContain = new AuxActionsContainer(this, Simulator.orRouteConfig);
-
-            //CJ
-            if (this.Number == 105)
-            {
-                Console.WriteLine($"A Number = {Number}");
-            }
         }
 
         //================================================================================================//
@@ -5661,13 +5659,6 @@ namespace Orts.Simulation.Physics
                 TrackCircuitSection thisSection = signalRef.TrackCircuitList[thisElement.TCSectionIndex];
                 thisSection.Reserve(routedForward, tempRoute);
             }
-
-            //CJ Number=105 does not appear
-            //if (this.Number >= 105)
-            //{
-            //    foreach (TCRouteElement thisElement in tempRoute)
-            //        Debug.WriteLine($"Number = {Number}, TCSectionIndex = {thisElement.TCSectionIndex}, OutPin[0], [1] = {thisElement.OutPin[0]}, {thisElement.OutPin[1]}");
-            //}
         }
 
         //================================================================================================//

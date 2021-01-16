@@ -2569,16 +2569,67 @@ namespace Orts.Simulation.Timetables
         public override void AIPreUpdate(float elapsedClockSeconds)
         {
             //CJ
-            //CJ
-            if (Number == 105)
+            //if (AI.clockTime >= 3300 && this.Number == 105)
+            //{
+            //    var minIntervalS = 0.5;
+            //    var maxIntervalS = 4.0;
+
+            //    var newAccelMpS2 = deltaSpeedMpS / deltaTimeS;
+            //    var deltaAccelMpS2 = newAccelMpS2 - OldAccelMpS2;
+
+
+            //    TrackCircuitSection thisSection = signalRef.TrackCircuitList[PresentPosition[0].TCSectionIndex];
+            //    float toGoM = thisSection.Length - PresentPosition[0].TCOffset;
+            //    double intervalToGoS = 0.0;
+            //    if (newSpeedMpS != 0.0)
+            //        intervalToGoS = toGoM / newSpeedMpS;
+
+            //    //if (intervalToGoS < Simulator.TimetablePeriodS && Simulator.TimetablePeriodS > minIntervalS)
+            //    //{
+            //    //    //Console.WriteLine($"Could reduce interval");
+            //    //    Simulator.TimetablePeriodS *= 0.5;
+            //    //}
+            //    //else
+            //    //{
+            //    //    //Console.WriteLine($"Could increase interval");
+            //    //    var abbAccel = Math.Abs(deltaAccelMpS2);
+            //    //    if (abbAccel < 0.2 && Simulator.TimetablePeriodS < maxIntervalS)
+            //    //        Simulator.TimetablePeriodS *= 2.0;
+            //    //}
+
+            //    Console.WriteLine($"{Simulator.TimetablePeriodS:F1}, {AI.clockTime:F1}, {MovementState}, AccelMpS2 = {newAccelMpS2:F2}, SpeedMpS = {newSpeedMpS:F2}, DistanceTravelledM = {DistanceTravelledM:F2},"
+            //        + $" RouteListIndex = {this.PresentPosition[0].RouteListIndex}, TCDirection = {PreviousPosition[0].TCDirection}, TCSectionIndex = { PreviousPosition[0].TCSectionIndex},"
+            //        + $" TCOffset = {PreviousPosition[0].TCOffset:F2}, toGoM = {toGoM:F2}, intervalToGoS = {intervalToGoS:F2}");
+
+
+            //    OldAccelMpS2 = newAccelMpS2;
+            //}
+            if (AI.clockTime >= 0 && this.Number == 1)
             {
-                Console.WriteLine($"train.Number {this.Number} {AI.clockTime} {DistanceTravelledM}");
+                var deltaDistanceTravelledM = DistanceTravelledM - OldDistanceTravelledM;
+                //var deltaTimeS = AI.clockTime - OldClockTime;
+                var deltaTimeS = OldClockTime - OldOldClockTime;
+                var newSpeedMpS = deltaDistanceTravelledM / deltaTimeS; // Can't use SpeedMpS as seems to be rounded to 0.5 MpS
+                var deltaSpeedMpS = newSpeedMpS - OldSpeedMpS;
+
+                var trackCircuit = signalRef.TrackCircuitList[PreviousPosition[0].TCSectionIndex];
+                float toGoM = trackCircuit.Length - PresentPosition[0].TCOffset;
+                Console.WriteLine($"{Simulator.TimetablePeriodS:F1}, {AI.clockTime:F1}, {MovementState}, DistanceTravelledM = {DistanceTravelledM:F2},"
+                    + $" speedMpS = {newSpeedMpS:F1},"
+                    + $" RouteListIndex = {this.PresentPosition[0].RouteListIndex}, TCDirection = {PreviousPosition[0].TCDirection},"
+                    + $" TCSectionIndex = { PreviousPosition[0].TCSectionIndex}," 
+                    + $" TCOffset = {PreviousPosition[0].TCOffset:F2}, toGoM = {toGoM:F2}");
+
+                OldDistanceTravelledM = DistanceTravelledM;
+                OldOldClockTime = OldClockTime;
+                OldClockTime = AI.clockTime;
+                OldSpeedMpS = newSpeedMpS;
             }
-            if (AI.clockTime >= 3426 && this.Number == 105)
+            if (this.Number == 1 && PreviousPosition[0].TCSectionIndex == 4378)
             {
-                Console.WriteLine($"train.Number {this.Number} {this.PresentPosition[0].RouteListIndex}");
+                Simulator.TimetablePeriodS = 1.0;
             }
-            var oldState = this.MovementState;
+
 
             // calculate delta speed and speed
             float distanceM = physicsPreUpdate(elapsedClockSeconds);
@@ -2639,6 +2690,7 @@ namespace Orts.Simulation.Timetables
             else if (ValidRoute != null && MovementState != AI_MOVEMENT_STATE.AI_STATIC)        // no actions required for static objects //
             {
                 movedBackward = CheckBackwardClearance();                                       // check clearance at rear //
+
                 UpdateTrainPosition();                                                          // position update         //              
                 UpdateTrainPositionInformation();                                               // position linked info    //
                 int SignalObjIndex = CheckSignalPassed(0, PresentPosition[0], PreviousPosition[0]);    // check if passed signal  //
@@ -2656,19 +2708,6 @@ namespace Orts.Simulation.Timetables
                 }
 
             }
-
-            //CJ
-            if (this.MovementState != oldState)
-            {
-                if (Number == 105)
-                {
-                    Console.WriteLine($"clockTime {AI.clockTime:F1} train {Number} {oldState} => {MovementState}");
-                }
-            }
-                if (Number == 105)
-                {
-                    Console.WriteLine($"clockTime {AI.clockTime:F1} PresentPosition[0].RouteListIndex = {PresentPosition[0].RouteListIndex}");
-                }
         }
 
         //================================================================================================//
@@ -9150,8 +9189,6 @@ namespace Orts.Simulation.Timetables
             if (PresentPosition[0].RouteListIndex < 0)
             {
                 Console.WriteLine($"ProcessEndOfPath: PresentPosition[0].RouteListIndex < 0 train: {Number}");
-
-
 
 
                 throw new Exception();
