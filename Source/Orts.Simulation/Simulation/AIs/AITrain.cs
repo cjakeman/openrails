@@ -53,6 +53,7 @@ namespace Orts.Simulation.AIs
         public double OldOldClockTime;
         public double OldSpeedMpS;
         public double OldAccelMpS2;
+        public int OldTrackCircuitIndex;
 
 
 
