@@ -50,6 +50,25 @@ namespace Orts.Simulation.AIs
 {
     public class AI
     {
+        private const double V = 0.3;
+
+        //CJ
+        // Prerun properties for the whole timetable
+        public const double MinIntervalS = 1.0;
+        public const double MaxIntervalS = 16.0;
+        public static double NextIntervalMinimumS = MinIntervalS;
+        public static double NextIntervalMaximumS = MaxIntervalS;
+        // Above these limits, consider increasing the pre-run interval
+        public static double SteadyLimitMpS = 1.0;
+        public static double SteadyLimitMpS2 = 0.3;
+        public static double SteadyLimitMpS3 = 0.1;
+
+        public static double OldClockTime;
+        public static double OldOldClockTime;
+        public static double OldOldOldClockTime;
+
+
+
         public readonly Simulator Simulator;
         public List<AITrain> AITrains = new List<AITrain>();// active AI trains
 
@@ -877,6 +896,21 @@ namespace Orts.Simulation.AIs
                     }
                 }
 
+                //CJ
+                if (preUpdate)
+                {
+                    // Choose the bottom of the range
+                    Simulator.TimetablePeriodS = Math.Min(NextIntervalMinimumS, NextIntervalMaximumS);
+
+                    // Expand the range as far as possible. It may be narrowed by any of the active AI trains 
+                    NextIntervalMaximumS = MaxIntervalS;
+                    NextIntervalMinimumS = MaxIntervalS;
+
+                    OldOldOldClockTime = OldOldClockTime;
+                    OldOldClockTime = OldClockTime;
+                    OldClockTime = clockTime;
+                    //Console.WriteLine($"Update cycle for pre-run {clockTime:F1}");
+                }
                 foreach (var train in AITrains)
                 {
                     if (train.TrainType != Train.TRAINTYPE.PLAYER && train.TrainType != Train.TRAINTYPE.INTENDED_PLAYER)

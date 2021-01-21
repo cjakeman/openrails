@@ -48,14 +48,11 @@ namespace Orts.Simulation.AIs
     public class AITrain : Train
     {
         //CJ
+        // Prerun properties for an AITrain
         public float OldDistanceTravelledM;
-        public double OldClockTime;
-        public double OldOldClockTime;
         public double OldSpeedMpS;
         public double OldAccelMpS2;
-        public int OldTrackCircuitIndex;
-
-
+        //public int OldTrackCircuitIndex;
 
         public int UiD;
         public AIPath Path;
