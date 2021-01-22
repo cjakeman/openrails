@@ -56,8 +56,8 @@ namespace Orts.Simulation.AIs
         // Prerun properties for the whole timetable
         public const double MinIntervalS = 1.0;
         public const double MaxIntervalS = 16.0;
-        public static double NextIntervalMinimumS = MinIntervalS;
-        public static double NextIntervalMaximumS = MaxIntervalS;
+        public static double ReduceLimitS = MaxIntervalS;
+        public static double IncreaseLimitS = MinIntervalS;
         // Above these limits, consider increasing the pre-run interval
         public static double SteadyLimitMpS = 1.0;
         public static double SteadyLimitMpS2 = 0.3;
@@ -900,16 +900,12 @@ namespace Orts.Simulation.AIs
                 if (preUpdate)
                 {
                     // Choose the bottom of the range
-                    Simulator.TimetablePeriodS = Math.Min(NextIntervalMinimumS, NextIntervalMaximumS);
+                    Simulator.TimetablePeriodS = Math.Min(IncreaseLimitS, ReduceLimitS);
+                    Simulator.TimetableCycles++;
 
-                    // Expand the range as far as possible. It may be narrowed by any of the active AI trains 
-                    NextIntervalMaximumS = MaxIntervalS;
-                    NextIntervalMinimumS = MaxIntervalS;
-
-                    OldOldOldClockTime = OldOldClockTime;
-                    OldOldClockTime = OldClockTime;
-                    OldClockTime = clockTime;
-                    //Console.WriteLine($"Update cycle for pre-run {clockTime:F1}");
+                    // Active AI trains affect these limits to change next cycle 
+                    ReduceLimitS = MaxIntervalS;   // Reduced globally if any train reduces it
+                    IncreaseLimitS = Simulator.TimetablePeriodS; // Increased globally if any train increases it.
                 }
                 foreach (var train in AITrains)
                 {
@@ -930,6 +926,11 @@ namespace Orts.Simulation.AIs
                         int presentTime = Convert.ToInt32(Math.Floor(clockTime));
                         trainTT.UpdateAIStaticState(presentTime);
                     }
+                }
+                //CJ
+                if (preUpdate)
+                {
+                    OldClockTime = clockTime;
                 }
 
                 RemoveTrains();

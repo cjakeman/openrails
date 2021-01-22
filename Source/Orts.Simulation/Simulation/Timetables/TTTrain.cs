@@ -2569,127 +2569,92 @@ namespace Orts.Simulation.Timetables
         public override void AIPreUpdate(float elapsedClockSeconds)
         {
             //CJ
-            //if (AI.clockTime >= 3300 && this.Number == 105)
+            //if (AI.clockTime >= 0 && this.Number == 1)
+            ////if (AI.clockTime >= 0)
             //{
-            //    var minIntervalS = 0.5;
-            //    var maxIntervalS = 4.0;
+            //    Simulator.TimetableCycles++;
 
+            //    var deltaDistanceTravelledM = DistanceTravelledM - OldDistanceTravelledM;
+            //    var deltaTimeS = AI.OldOldClockTime - AI.OldOldOldClockTime;
+            //    var newSpeedMpS = deltaDistanceTravelledM / deltaTimeS; // Can't use SpeedMpS as seems to be rounded to 0.5 MpS
+            //    var deltaSpeedMpS = newSpeedMpS - OldSpeedMpS;
             //    var newAccelMpS2 = deltaSpeedMpS / deltaTimeS;
             //    var deltaAccelMpS2 = newAccelMpS2 - OldAccelMpS2;
+            //    var newDtAccelMpS3 = deltaAccelMpS2 / deltaTimeS;
 
+            //    var trackCircuit = signalRef.TrackCircuitList[PresentPosition[0].TCSectionIndex];
+            //    float toGoM = trackCircuit.Length - PresentPosition[0].TCOffset;
+            //    var twoIntervalS = Simulator.TimetablePeriodS * 2; // Could be refined
+            //    var twoStepM = (newSpeedMpS) * twoIntervalS + (newAccelMpS2 * twoIntervalS * twoIntervalS / 2);
+            //    //if (Number == 1)
+            //    {
+            //        Console.WriteLine($"{Simulator.TimetablePeriodS:F1}, {AI.clockTime:F1}, {AI.OldOldClockTime:F1}, {AI.OldOldOldClockTime:F1}, Train {Number},"
+            //            + $" {MovementState}, DistanceTravelledM = {DistanceTravelledM:F1},"
+            //            //+ $" deltaTimeS {deltaTimeS:F1},"
+            //            + $" speed = {newSpeedMpS:F1}, accel = {newAccelMpS2:F2}, DtAccel = {newDtAccelMpS3:F3},"
+            //            + $" RouteListIndex = {this.PresentPosition[0].RouteListIndex}, TCDirection = {PresentPosition[0].TCDirection},"
+            //            + $" TCSectionIndex = { PresentPosition[0].TCSectionIndex},"
+            //            + $" TCOffset = {PresentPosition[0].TCOffset:F1}, toGoM = {toGoM:F1}, twoStepM = {twoStepM:F1}, TCLength = {trackCircuit.Length:F1},"
+            //            + $" AverageInterval = {(AI.clockTime - 62) / Simulator.TimetableCycles:F1}");
+            //    }
+            //    // Jump to shortest interval if this step plus next step would step beyond the current track circuit
+            //    if (Simulator.TimetablePeriodS > AI.MinIntervalS && twoStepM > toGoM) // 2 steps so we can look ahead
+            //    {
+            //        Console.WriteLine($"Track circuit ends => shortest interval from {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
+            //        //while (Simulator.TimetablePeriodS > minIntervalS && (2 * stepM) > toGoM)
+            //        //{
+            //        //    Simulator.TimetablePeriodS /= 2;
+            //        //    stepM /= 2; ;
+            //        //}
+            //        //Simulator.TimetablePeriodS = AI.MinIntervalS;
+            //        AI.NextIntervalMaximumS = AI.MinIntervalS;
+            //    }
+            //    else
+            //    {
+            //        // Jump to maximum resolution if about to start
+            //        if (MovementState == AI_MOVEMENT_STATE.STOPPED || MovementState == AI_MOVEMENT_STATE.INIT)
+            //        {
+            //            Console.WriteLine($"STOPPED => shortest interval {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
+            //            //Simulator.TimetablePeriodS = AI.MinIntervalS;
+            //            AI.NextIntervalMaximumS = AI.MinIntervalS;
+            //        }
 
-            //    TrackCircuitSection thisSection = signalRef.TrackCircuitList[PresentPosition[0].TCSectionIndex];
-            //    float toGoM = thisSection.Length - PresentPosition[0].TCOffset;
-            //    double intervalToGoS = 0.0;
-            //    if (newSpeedMpS != 0.0)
-            //        intervalToGoS = toGoM / newSpeedMpS;
-
-            //    //if (intervalToGoS < Simulator.TimetablePeriodS && Simulator.TimetablePeriodS > minIntervalS)
-            //    //{
-            //    //    //Console.WriteLine($"Could reduce interval");
-            //    //    Simulator.TimetablePeriodS *= 0.5;
-            //    //}
-            //    //else
-            //    //{
-            //    //    //Console.WriteLine($"Could increase interval");
-            //    //    var abbAccel = Math.Abs(deltaAccelMpS2);
-            //    //    if (abbAccel < 0.2 && Simulator.TimetablePeriodS < maxIntervalS)
-            //    //        Simulator.TimetablePeriodS *= 2.0;
-            //    //}
-
-            //    Console.WriteLine($"{Simulator.TimetablePeriodS:F1}, {AI.clockTime:F1}, {MovementState}, AccelMpS2 = {newAccelMpS2:F2}, SpeedMpS = {newSpeedMpS:F2}, DistanceTravelledM = {DistanceTravelledM:F2},"
-            //        + $" RouteListIndex = {this.PresentPosition[0].RouteListIndex}, TCDirection = {PreviousPosition[0].TCDirection}, TCSectionIndex = { PreviousPosition[0].TCSectionIndex},"
-            //        + $" TCOffset = {PreviousPosition[0].TCOffset:F2}, toGoM = {toGoM:F2}, intervalToGoS = {intervalToGoS:F2}");
-
-
+            //        // shortest interval if accelerating or braking significantly
+            //        if (Simulator.TimetablePeriodS > AI.MinIntervalS
+            //        && (Math.Abs(newAccelMpS2) >= AI.SteadyLimitMpS2 || Math.Abs(newDtAccelMpS3) >= AI.SteadyLimitMpS3))
+            //        {
+            //            if (Math.Abs(newAccelMpS2) >= AI.SteadyLimitMpS2)
+            //                Console.WriteLine($"Excess accel {newAccelMpS2:F2} => shortest interval {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
+            //            else if (Math.Abs(newDtAccelMpS3) >= AI.SteadyLimitMpS3)
+            //                Console.WriteLine($"Excess DtAccel {newDtAccelMpS3:F3} => shortest interval {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
+            //            //Simulator.TimetablePeriodS = AI.MinIntervalS;
+            //            AI.NextIntervalMaximumS = AI.MinIntervalS;
+            //        }
+            //        else if (2 * twoStepM > toGoM)
+            //        {
+            //            // Don't increase interval as that would step over the end of the track circuit
+            //        }
+            //        // Increase interval if not accelerating or braking significantly
+            //        else if (Simulator.TimetablePeriodS < AI.MaxIntervalS
+            //            && (MovementState == AI_MOVEMENT_STATE.STATION_STOP) // if stopped at a station
+            //                || (newSpeedMpS > AI.SteadyLimitMpS)             // not if speed is low as that will delay starting
+            //            && (Math.Abs(newAccelMpS2) < AI.SteadyLimitMpS2 || Math.Abs(newDtAccelMpS3) < AI.SteadyLimitMpS3))
+            //        {
+            //            if (Math.Abs(newAccelMpS2) < AI.SteadyLimitMpS2)
+            //                Console.WriteLine($"Low accel {newAccelMpS2:F2} => increase from {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
+            //            else if (Math.Abs(newDtAccelMpS3) < AI.SteadyLimitMpS3)
+            //                Console.WriteLine($"Low DtAccel {newDtAccelMpS3:F3} => increase from {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
+            //            //Simulator.TimetablePeriodS *= 2;
+            //            AI.NextIntervalMinimumS = Simulator.TimetablePeriodS *= 2;
+            //        }
+            //    }
+            //    OldDistanceTravelledM = DistanceTravelledM;
+            //    //AI.OldOldClockTime = AI.OldClockTime;
+            //    //AI.OldClockTime = AI.clockTime;
+            //    OldSpeedMpS = newSpeedMpS;
             //    OldAccelMpS2 = newAccelMpS2;
+            //    //OldTrackCircuitIndex = trackCircuit.Index;
             //}
-            if (AI.clockTime >= 0 && this.Number == 1)
-            //if (AI.clockTime >= 0)
-            {
-                Simulator.TimetableCycles++;
-
-                var deltaDistanceTravelledM = DistanceTravelledM - OldDistanceTravelledM;
-                var deltaTimeS = AI.OldOldClockTime - AI.OldOldOldClockTime;
-                var newSpeedMpS = deltaDistanceTravelledM / deltaTimeS; // Can't use SpeedMpS as seems to be rounded to 0.5 MpS
-                var deltaSpeedMpS = newSpeedMpS - OldSpeedMpS;
-                var newAccelMpS2 = deltaSpeedMpS / deltaTimeS;
-                var deltaAccelMpS2 = newAccelMpS2 - OldAccelMpS2;
-                var newDtAccelMpS3 = deltaAccelMpS2 / deltaTimeS;
-
-                var trackCircuit = signalRef.TrackCircuitList[PresentPosition[0].TCSectionIndex];
-                float toGoM = trackCircuit.Length - PresentPosition[0].TCOffset;
-                var twoIntervalS = Simulator.TimetablePeriodS * 2; // Could be refined
-                var twoStepM = (newSpeedMpS) * twoIntervalS + (newAccelMpS2 * twoIntervalS * twoIntervalS / 2);
-                //if (Number == 1)
-                {
-                    Console.WriteLine($"{Simulator.TimetablePeriodS:F1}, {AI.clockTime:F1}, {AI.OldOldClockTime:F1}, {AI.OldOldOldClockTime:F1}, Train {Number},"
-                        + $" {MovementState}, DistanceTravelledM = {DistanceTravelledM:F1},"
-                        //+ $" deltaTimeS {deltaTimeS:F1},"
-                        + $" speed = {newSpeedMpS:F1}, accel = {newAccelMpS2:F2}, DtAccel = {newDtAccelMpS3:F3},"
-                        + $" RouteListIndex = {this.PresentPosition[0].RouteListIndex}, TCDirection = {PresentPosition[0].TCDirection},"
-                        + $" TCSectionIndex = { PresentPosition[0].TCSectionIndex},"
-                        + $" TCOffset = {PresentPosition[0].TCOffset:F1}, toGoM = {toGoM:F1}, twoStepM = {twoStepM:F1}, TCLength = {trackCircuit.Length:F1},"
-                        + $" AverageInterval = {(AI.clockTime - 62) / Simulator.TimetableCycles:F1}");
-                }
-                // Jump to shortest interval if this step plus next step would step beyond the current track circuit
-                if (Simulator.TimetablePeriodS > AI.MinIntervalS && twoStepM > toGoM) // 2 steps so we can look ahead
-                {
-                    Console.WriteLine($"Track circuit ends => shortest interval from {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
-                    //while (Simulator.TimetablePeriodS > minIntervalS && (2 * stepM) > toGoM)
-                    //{
-                    //    Simulator.TimetablePeriodS /= 2;
-                    //    stepM /= 2; ;
-                    //}
-                    //Simulator.TimetablePeriodS = AI.MinIntervalS;
-                    AI.NextIntervalMaximumS = AI.MinIntervalS;
-                }
-                else
-                {
-                    // Jump to maximum resolution if about to start
-                    if (MovementState == AI_MOVEMENT_STATE.STOPPED || MovementState == AI_MOVEMENT_STATE.INIT)
-                    {
-                        Console.WriteLine($"STOPPED => shortest interval {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
-                        //Simulator.TimetablePeriodS = AI.MinIntervalS;
-                        AI.NextIntervalMaximumS = AI.MinIntervalS;
-                    }
-
-                    // shortest interval if accelerating or braking significantly
-                    if (Simulator.TimetablePeriodS > AI.MinIntervalS
-                    && (Math.Abs(newAccelMpS2) >= AI.SteadyLimitMpS2 || Math.Abs(newDtAccelMpS3) >= AI.SteadyLimitMpS3))
-                    {
-                        if (Math.Abs(newAccelMpS2) >= AI.SteadyLimitMpS2)
-                            Console.WriteLine($"Excess accel {newAccelMpS2:F2} => shortest interval {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
-                        else if (Math.Abs(newDtAccelMpS3) >= AI.SteadyLimitMpS3)
-                            Console.WriteLine($"Excess DtAccel {newDtAccelMpS3:F3} => shortest interval {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
-                        //Simulator.TimetablePeriodS = AI.MinIntervalS;
-                        AI.NextIntervalMaximumS = AI.MinIntervalS;
-                    }
-                    else if (2 * twoStepM > toGoM)
-                    {
-                        // Don't increase interval as that would step over the end of the track circuit
-                    }
-                    // Increase interval if not accelerating or braking significantly
-                    else if (Simulator.TimetablePeriodS < AI.MaxIntervalS
-                        && (MovementState == AI_MOVEMENT_STATE.STATION_STOP) // if stopped at a station
-                            || (newSpeedMpS > AI.SteadyLimitMpS)             // not if speed is low as that will delay starting
-                        && (Math.Abs(newAccelMpS2) < AI.SteadyLimitMpS2 || Math.Abs(newDtAccelMpS3) < AI.SteadyLimitMpS3))
-                    {
-                        if (Math.Abs(newAccelMpS2) < AI.SteadyLimitMpS2)
-                            Console.WriteLine($"Low accel {newAccelMpS2:F2} => increase from {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
-                        else if (Math.Abs(newDtAccelMpS3) < AI.SteadyLimitMpS3)
-                            Console.WriteLine($"Low DtAccel {newDtAccelMpS3:F3} => increase from {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
-                        //Simulator.TimetablePeriodS *= 2;
-                        AI.NextIntervalMinimumS = Simulator.TimetablePeriodS *= 2;
-                    }
-                }
-                OldDistanceTravelledM = DistanceTravelledM;
-                //AI.OldOldClockTime = AI.OldClockTime;
-                //AI.OldClockTime = AI.clockTime;
-                OldSpeedMpS = newSpeedMpS;
-                OldAccelMpS2 = newAccelMpS2;
-                //OldTrackCircuitIndex = trackCircuit.Index;
-            }
 
 
             // calculate delta speed and speed
@@ -2769,13 +2734,96 @@ namespace Orts.Simulation.Timetables
                 }
 
             }
+
+            //CJ
+            //if (AI.clockTime >= 0 && this.Number == 1)
+            if (AI.clockTime >= 0)
+            {
+                var deltaDistanceTravelledM = DistanceTravelledM - OldDistanceTravelledM;
+                var deltaTimeS = AI.clockTime - AI.OldClockTime;
+                var newSpeedMpS = deltaDistanceTravelledM / deltaTimeS; // Can't use SpeedMpS as seems to be rounded to 0.5 MpS
+                var deltaSpeedMpS = newSpeedMpS - OldSpeedMpS;
+                var newAccelMpS2 = deltaSpeedMpS / deltaTimeS;
+                var deltaAccelMpS2 = newAccelMpS2 - OldAccelMpS2;
+                var newDtAccelMpS3 = deltaAccelMpS2 / deltaTimeS;
+
+                var trackCircuit = signalRef.TrackCircuitList[PresentPosition[0].TCSectionIndex];
+                float toGoM = trackCircuit.Length - PresentPosition[0].TCOffset;
+                var twoIntervalS = Simulator.TimetablePeriodS * 2; // Could be refined
+                var twoStepM = (newSpeedMpS) * twoIntervalS + (newAccelMpS2 * twoIntervalS * twoIntervalS / 2);
+                {
+                    Console.WriteLine($"{Simulator.TimetablePeriodS:F1}, {AI.clockTime:F1}, {AI.OldOldClockTime:F1}, {AI.OldOldOldClockTime:F1}, Train {Number},"
+                        + $" {MovementState}, DistanceTravelledM = {DistanceTravelledM:F1},"
+                        + $" deltaTimeS {deltaTimeS:F1},"
+                        + $" speed = {newSpeedMpS:F1}, accel = {newAccelMpS2:F2}, DtAccel = {newDtAccelMpS3:F3},"
+                        + $" RouteListIndex = {this.PresentPosition[0].RouteListIndex}, TCDirection = {PresentPosition[0].TCDirection},"
+                        + $" TCSectionIndex = { PresentPosition[0].TCSectionIndex},"
+                        + $" TCOffset = {PresentPosition[0].TCOffset:F1}, toGoM = {toGoM:F1}, twoStepM = {twoStepM:F1}, TCLength = {trackCircuit.Length:F1},"
+                        + $" AverageInterval = {(AI.clockTime - 62) / Simulator.TimetableCycles:F1}");
+                }
+                // Jump to shortest interval if this step plus next step would step beyond the current track circuit
+                if (Simulator.TimetablePeriodS > AI.MinIntervalS && twoStepM > toGoM) // 2 steps so we can look ahead
+                {
+                    //Console.WriteLine($"Track circuit ends => shortest interval from {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
+                    //while (Simulator.TimetablePeriodS > minIntervalS && (2 * stepM) > toGoM)
+                    //{
+                    //    Simulator.TimetablePeriodS /= 2;
+                    //    stepM /= 2; ;
+                    //}
+                    //Simulator.TimetablePeriodS = AI.MinIntervalS;
+                    AI.ReduceLimitS = Math.Min(AI.ReduceLimitS, AI.MinIntervalS);
+                }
+                else
+                {
+                    // Jump to shortest interval if about to start
+                    if (MovementState == AI_MOVEMENT_STATE.STOPPED || MovementState == AI_MOVEMENT_STATE.INIT)
+                    {
+                        //Console.WriteLine($"INIT || STOPPED => shortest interval {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
+                        //Simulator.TimetablePeriodS = AI.MinIntervalS;
+                        AI.ReduceLimitS = Math.Min(AI.ReduceLimitS, AI.MinIntervalS);
+                    }
+
+                    // shortest interval if accelerating or braking significantly
+                    if (Simulator.TimetablePeriodS > AI.MinIntervalS
+                    && (Math.Abs(newAccelMpS2) >= AI.SteadyLimitMpS2 || Math.Abs(newDtAccelMpS3) >= AI.SteadyLimitMpS3))
+                    {
+                        //if (Math.Abs(newAccelMpS2) >= AI.SteadyLimitMpS2)
+                        //    Console.WriteLine($"Excess accel {newAccelMpS2:F2} => shortest interval {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
+                        //else if (Math.Abs(newDtAccelMpS3) >= AI.SteadyLimitMpS3)
+                        //    Console.WriteLine($"Excess DtAccel {newDtAccelMpS3:F3} => shortest interval {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
+                        //Simulator.TimetablePeriodS = AI.MinIntervalS;
+                        AI.ReduceLimitS = Math.Min(AI.ReduceLimitS, AI.MinIntervalS);
+                    }
+                    else if (2 * twoStepM > toGoM)
+                    {
+                        // Don't increase interval as that would step over the end of the track circuit
+                        AI.ReduceLimitS = Math.Min(AI.ReduceLimitS, Simulator.TimetablePeriodS);
+                    }
+                    // Increase interval if not accelerating or braking significantly
+                    else if (Simulator.TimetablePeriodS < AI.MaxIntervalS
+                        && (MovementState == AI_MOVEMENT_STATE.STATION_STOP) // if stopped at a station
+                            || (newSpeedMpS > AI.SteadyLimitMpS)             // not if speed is low as that will delay starting
+                        && (Math.Abs(newAccelMpS2) < AI.SteadyLimitMpS2 || Math.Abs(newDtAccelMpS3) < AI.SteadyLimitMpS3))
+                    {
+                        //if (Math.Abs(newAccelMpS2) < AI.SteadyLimitMpS2)
+                        //    Console.WriteLine($"Low accel {newAccelMpS2:F2} => increase from {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
+                        //else if (Math.Abs(newDtAccelMpS3) < AI.SteadyLimitMpS3)
+                        //    Console.WriteLine($"Low DtAccel {newDtAccelMpS3:F3} => increase from {Simulator.TimetablePeriodS} secs for train {Number} {Name}");
+                        //Simulator.TimetablePeriodS *= 2;
+                        AI.IncreaseLimitS = Simulator.TimetablePeriodS * 2;
+                    }
+                }
+                OldDistanceTravelledM = DistanceTravelledM;
+                OldSpeedMpS = newSpeedMpS;
+                OldAccelMpS2 = newAccelMpS2;
+                //OldTrackCircuitIndex = trackCircuit.Index;
+            }
         }
 
         //================================================================================================//
         /// <summary>
         /// Update train physics during Pre-Update
         /// <\summary>
-
         public float physicsPreUpdate(float elapsedClockSeconds)
         {
 
