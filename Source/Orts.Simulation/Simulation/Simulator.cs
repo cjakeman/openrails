@@ -92,8 +92,12 @@ namespace Orts.Simulation
         public bool TimetableMode;
 
         //CJ
-        public double TimetablePeriodS = 2.0;
+        public double TimetablePeriodS = 5.0;
         public int TimetableCycles = 0;
+        public double NextTimetablePeriodS = 5.0;
+        public double MinTimetablePeriodS = 1.0;
+        public double MaxTimetablePeriodS = 5.0;
+        public float CoupleRangeM = 50.0f;
 
         public ActivityFile Activity;
         public Activity ActivityRun;

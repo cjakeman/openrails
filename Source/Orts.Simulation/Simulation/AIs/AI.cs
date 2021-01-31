@@ -67,6 +67,8 @@ namespace Orts.Simulation.AIs
         public static double OldOldClockTime;
         public static double OldOldOldClockTime;
 
+        public static int nextTCApproaching = 0;
+        public static double MinTCDurationS = 9999.9;
 
 
         public readonly Simulator Simulator;
@@ -899,13 +901,16 @@ namespace Orts.Simulation.AIs
                 //CJ
                 if (preUpdate)
                 {
-                    // Choose the bottom of the range
-                    Simulator.TimetablePeriodS = Math.Min(IncreaseLimitS, ReduceLimitS);
-                    Simulator.TimetableCycles++;
+                    //Simulator.TimetablePeriodS = (nextTCApproaching == 0) ? 5.0 : 1.0;
+                    //Console.WriteLine($"Cycle start, {Simulator.TimetablePeriodS}, nextTCApproaching = ,{nextTCApproaching}");
+                    //Simulator.TimetableCycles++;
+                    
+                    //nextTCApproaching = 0;
 
-                    // Active AI trains affect these limits to change next cycle 
-                    ReduceLimitS = MaxIntervalS;   // Reduced globally if any train reduces it
-                    IncreaseLimitS = Simulator.TimetablePeriodS; // Increased globally if any train increases it.
+                    if (Simulator.TimetablePeriodS != Simulator.NextTimetablePeriodS)
+                        Simulator.TimetablePeriodS = Simulator.NextTimetablePeriodS;
+
+                    Simulator.NextTimetablePeriodS = Simulator.MaxTimetablePeriodS;
                 }
                 foreach (var train in AITrains)
                 {

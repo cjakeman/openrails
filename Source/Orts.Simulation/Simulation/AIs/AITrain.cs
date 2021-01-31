@@ -52,7 +52,8 @@ namespace Orts.Simulation.AIs
         public float OldDistanceTravelledM;
         public double OldSpeedMpS;
         public double OldAccelMpS2;
-        //public int OldTrackCircuitIndex;
+        public int OldTrackCircuitIndex;
+        public bool nextTCApproaching;
 
         public int UiD;
         public AIPath Path;

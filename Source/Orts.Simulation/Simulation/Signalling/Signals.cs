@@ -25,6 +25,9 @@
 // #define DEBUG_DEADLOCK
 // print details of deadlock processing
 
+//cj
+#define DEBUG_PRINT
+
 using Microsoft.Xna.Framework;
 using Orts.Formats.Msts;
 using Orts.Formats.OR;
@@ -1812,6 +1815,18 @@ namespace Orts.Simulation.Signalling
                     thisSignal.setSignalDefaultNextSignal();
                 }
             }
+
+            //CJ
+            //Console.WriteLine($"Index, Length, OffsetLength[0], CircuitType");
+            //foreach (var tc in TrackCircuitList)
+            //{
+            //    Console.WriteLine($"{tc.Index}, {tc.Length}, {tc.OffsetLength[0]}, {tc.CircuitType}");
+            //}
+
+            //PrintTCBase(trackNodes);
+
+
+
         }
 
         //================================================================================================//
