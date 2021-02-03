@@ -52,6 +52,7 @@ namespace Orts.Simulation.Timetables
         double StepM;
         double ToGoM;
         float PreviousDist = 9999.0f;
+        float newSpeedMpS;
 
 
 
@@ -2786,7 +2787,7 @@ namespace Orts.Simulation.Timetables
                     var deltaDistanceTravelledM = DistanceTravelledM - OldDistanceTravelledM;
                 var deltaTimeS = elapsedClockSeconds; // Refers to the previous step
                 var deltaNextS = Simulator.TimetablePeriodS; // Refers to the current step
-                var newSpeedMpS = deltaDistanceTravelledM / deltaTimeS; // Can't use SpeedMpS as seems to be rounded to 0.5 MpS
+                newSpeedMpS = deltaDistanceTravelledM / deltaTimeS; // Can't use SpeedMpS as seems to be rounded to 0.5 MpS
                 var deltaSpeedMpS = newSpeedMpS - OldSpeedMpS;
                 var newAccelMpS2 = deltaSpeedMpS / deltaTimeS;
                 var deltaAccelMpS2 = newAccelMpS2 - OldAccelMpS2;
@@ -2804,7 +2805,11 @@ namespace Orts.Simulation.Timetables
                 //    if (AI.MinTCDurationS > TCDurationS)
                 //    {
                 //        AI.MinTCDurationS = TCDurationS;
-                    Console.WriteLine($"{AI.clockTime:F1}, {Simulator.TimetablePeriodS:F1}, Train {Number},"
+
+                var toActivateM = 0f;
+                if (nextActionInfo != null)
+                    toActivateM = nextActionInfo.ActivateDistanceM - DistanceTravelledM;
+                Console.WriteLine($"{AI.clockTime:F1}, {Simulator.TimetablePeriodS:F1}, Train {Number},"
                     + $" {MovementState}, DistanceTravelledM = {DistanceTravelledM:F1},"
                     //+ $" deltaTimeS {deltaTimeS:F1},"
                     + $" speed = {newSpeedMpS:F1}, accel = {newAccelMpS2:F2}, DtAccel = {newDtAccelMpS3:F3},"
@@ -2812,7 +2817,7 @@ namespace Orts.Simulation.Timetables
                     + $" TCSectionIndex = { PresentPosition[0].TCSectionIndex}, TCDurationS = {TCDurationS:F1},"
                     + $" TCLength = {trackCircuit.Length:F1}, TCOffset = {PresentPosition[0].TCOffset:F1},"
                     //+ $" toGoM = {toGoM:F1}, twoStepM = {twoStepM:F1},"
-                    + $" toGoM = {ToGoM:F1}, stepM = {StepM:F1},"
+                    + $" toActivateM = {toActivateM:F1},"
                     //+ $" AverageInterval = {(AI.clockTime - 62) / Simulator.TimetableCycles:F1}"
                     );
                 //}
@@ -2924,8 +2929,32 @@ namespace Orts.Simulation.Timetables
                 OldAccelMpS2 = newAccelMpS2;
                 OldTrackCircuitIndex = trackCircuit.Index;
 
-                //if (AI.clockTime >= 3381)
-                //    Simulator.TimetablePeriodS = 1.0;
+                //if (AI.clockTime > 15790 && AI.clockTime < 15825) // Train 35
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                //if (AI.clockTime > 16266 && AI.clockTime < 16313) // Train 160
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                //if (AI.clockTime > 17140 && AI.clockTime < 17200) // Train 15
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                //if (AI.clockTime > 17630 && AI.clockTime < 17664) // Train 149
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                //if (AI.clockTime > 17760 && AI.clockTime < 17817) // Train 151
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                //if (AI.clockTime > 19150 && AI.clockTime < 19182) // Train 21
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                //if (AI.clockTime > 19830 && AI.clockTime < 19869) // Train 38
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                //if (AI.clockTime > 20200 && AI.clockTime < 20233) // Train 162
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                //if (AI.clockTime > 21100 && AI.clockTime < 21130) // Train 116
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                //if (AI.clockTime > 23400 && AI.clockTime < 23444) // Train 472
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                //if (AI.clockTime > 23990 && AI.clockTime < 24087) // Train 200
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                //if (AI.clockTime > 32440 && AI.clockTime < 32465) // Train 12
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                //if (AI.clockTime > 42650 && AI.clockTime < 42692) // Train 247
+                //    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
             }
         }
 
@@ -4810,10 +4839,10 @@ namespace Orts.Simulation.Timetables
                 else if (nextActionInfo.NextAction == AIActionItem.AI_ACTION_TYPE.REVERSAL)
                 {
                     //CJ
-                    if (SpeedMpS < 0.05f) MovementState = AI_MOVEMENT_STATE.STOPPED;
-                    //if (AI.PreUpdate)
+                    //if (SpeedMpS < 0.05f) MovementState = AI_MOVEMENT_STATE.STOPPED;
+                    //if (PreUpdate)
                     //{
-                    //    if (SpeedMpS < 0.05f)
+                    //    if (SpeedMpS < 1.0f)
                     //    {
                     //        Console.WriteLine($"Time {presentTime}, Train {Number}, TCIndex = {PresentPosition[0].TCSectionIndex}, speedMpS = {SpeedMpS}, REVERSED below 3MpS");
                     //        MovementState = AI_MOVEMENT_STATE.STOPPED;
@@ -4825,6 +4854,23 @@ namespace Orts.Simulation.Timetables
                     //}
                     //else
                     //    if (SpeedMpS < 0.05f) MovementState = AI_MOVEMENT_STATE.STOPPED;
+
+                    //CJ
+                    if (PreUpdate)
+                    {
+                        Console.WriteLine($"Train {Number}, {Name}, TCIndex = {PresentPosition[0].TCSectionIndex}, speedMpS = {SpeedMpS}, AIActionItem.AI_ACTION_TYPE.REVERSAL");
+                        var distanceToGo2M = Math.Abs(nextActionInfo.ActivateDistanceM - DistanceTravelledM);
+                        if (distanceToGo2M < 10.0f // Within 10 metres 
+                        || OldDistanceToGo2M < distanceToGo2M) // or overshot
+                            MovementState = AI_MOVEMENT_STATE.STOPPED;
+                        OldDistanceToGo2M = distanceToGo2M;
+                        Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                    }
+                    else
+                    {
+                        if (SpeedMpS < 0.05f)
+                            MovementState = AI_MOVEMENT_STATE.STOPPED;
+                    }
 
                     RestdelayS = DelayedStartSettings.reverseAddedDelaySperM * Length;
                 }
@@ -6722,14 +6768,29 @@ namespace Orts.Simulation.Timetables
             //float dist = usedTraveller.OverlapDistanceM(otherTraveller, false);
             float dist = OverlapDistanceMCJ(usedTraveller, otherTraveller, false);
 
-            //CJ
-            if (Simulator.TimetablePeriodS > Simulator.MinTimetablePeriodS && dist < Simulator.CoupleRangeM)
+            //CJ THIS IS NOT BEING EXECUTED
+            if (PreUpdate)
             {
-                Console.WriteLine($"Switch to high-res for train {Number} {Name}");
-            }
-            if (dist < Simulator.CoupleRangeM)
-                Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                if (Simulator.TimetablePeriodS > Simulator.MinTimetablePeriodS && dist < Simulator.CoupleRangeM)
+                {
+                    Console.WriteLine($"Couple: Switch to high-res for train {Number} {Name}");
+                }
+                if (dist < Simulator.CoupleRangeM)
+                    Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
 
+                var toActivateM = 0f;
+                if (nextActionInfo != null)
+                {
+                    toActivateM = nextActionInfo.ActivateDistanceM - DistanceTravelledM;
+                    var toActivateS = toActivateM / newSpeedMpS;
+                    if (Simulator.TimetablePeriodS > Simulator.MinTimetablePeriodS && Simulator.TimetablePeriodS * 2 > toActivateS)
+                    {
+                        Console.WriteLine($"Reverse: Switch to high-res for train {Number} {Name}");
+                    }
+                    if (Simulator.TimetablePeriodS * 2> toActivateS)
+                        Simulator.NextTimetablePeriodS = Simulator.MinTimetablePeriodS;
+                } 
+            }
             // If pre-run and distance is not decreasing then return true
             if (PreUpdate)
             {

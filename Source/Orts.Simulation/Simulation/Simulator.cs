@@ -97,7 +97,7 @@ namespace Orts.Simulation
         public double NextTimetablePeriodS = 5.0;
         public double MinTimetablePeriodS = 1.0;
         public double MaxTimetablePeriodS = 5.0;
-        public float CoupleRangeM = 50.0f;
+        public float CoupleRangeM = 50.0f; // At 5 sec interval, suitable for speeds under 10 MpS
 
         public ActivityFile Activity;
         public Activity ActivityRun;

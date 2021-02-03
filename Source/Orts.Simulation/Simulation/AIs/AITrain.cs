@@ -54,6 +54,7 @@ namespace Orts.Simulation.AIs
         public double OldAccelMpS2;
         public int OldTrackCircuitIndex;
         public bool nextTCApproaching;
+        public float OldDistanceToGo2M = 9999.0f; // Distance from train to reversing point
 
         public int UiD;
         public AIPath Path;
