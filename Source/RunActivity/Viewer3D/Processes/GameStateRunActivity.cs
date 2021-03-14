@@ -1044,6 +1044,18 @@ namespace Orts.Viewer3D.Processes
                         Simulator.TimetableFileName = System.IO.Path.GetFileNameWithoutExtension(args[0]);
                         Simulator.PathName = String.Copy(args[1]);
                     }
+
+
+                    //CJ
+                    // Adds an extra argument as a double to override the default timetable pre-run period of 5.0 secs
+                    // E.g. -start -timetable "C:\dev\OR\Demo Model 1\ROUTES\SCE\ACTIVITIES\OPENRAILS\SCE_total.timetable_or" "SCE:Observer" 0 1 0 "" 2.0
+                    // starts Demo Model 1 with a prerun period of 2.0 seconds
+                    if (args.Length > 6)
+                        if (double.TryParse(args[6], out double timetablePeriodS))
+                            Simulator.TimetablePeriodS = timetablePeriodS;
+                        else
+                            Trace.TraceWarning($"Cannot parse {args[6]} as timetablePeriodS. Default value {Simulator.TimetablePeriodS} seconds used.");
+
                     break;
             }
 

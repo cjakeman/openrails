@@ -342,7 +342,6 @@ namespace Orts.Simulation.AIs
                 clockTime = firstAITime - 1.0f;
                 localTime = true;
                 PreUpdate = true;
-
                 for (double runTime = firstAITime; runTime < Simulator.ClockTime; runTime += 5.0) // update with 5 secs interval
                 {
                     int fullsec = Convert.ToInt32(runTime);
@@ -373,10 +372,17 @@ namespace Orts.Simulation.AIs
                 localTime = true;
                 PreUpdate = true;
                 bool activeTrains = false;
-                for (double runTime = firstAITime; runTime < Simulator.ClockTime && !endPreRun; runTime += 5.0) // update with 5 secs interval
+
+                //CJ
+                //for (double runTime = firstAITime; runTime < Simulator.ClockTime && !endPreRun; runTime += 5.0) // update with 5 secs interval
+                for (double runTime = firstAITime; runTime < Simulator.ClockTime && !endPreRun; runTime += Simulator.TimetablePeriodS) // update with a preset interval
+                
                 {
                     int fullsec = Convert.ToInt32(runTime);
-                    if (fullsec % 3600 < 5) Trace.Write(" " + (fullsec / 3600).ToString("00") + ":00 ");
+
+                    //CJ
+                    //if (fullsec % 3600 < 5) Trace.Write(" " + (fullsec / 3600).ToString("00") + ":00 ");
+                    if (fullsec % 3600 < Simulator.TimetablePeriodS) Trace.Write(" " + (fullsec / 3600).ToString("00") + ":00 ");
 
                     endPreRun = AITTUpdate((float)(runTime - clockTime), PreUpdate, ref activeTrains);
 
@@ -535,7 +541,11 @@ namespace Orts.Simulation.AIs
                 {
                     bool dummy = true;  // dummy boolead for ActiveTrains
 
-                    float deltaTime = 5.0f; // update with 1 sec. interval
+                    //CJ
+                    //float deltaTime = 5.0f; // update with 1 sec. interval
+                    float deltaTime = (float)Simulator.TimetablePeriodS; // update with 1 sec. interval
+
+
                     double runTime = Simulator.ClockTime - (double)deltaTime;
                     bool playerTrainStarted = false;
 
