@@ -90,6 +90,10 @@ namespace Orts.Simulation
         public string ActivityFileName;
         public string TimetableFileName;
         public bool TimetableMode;
+
+        //CJ
+        public double TimetablePeriodS = 5.0;
+
         public ActivityFile Activity;
         public Activity ActivityRun;
         public TrackDatabaseFile TDB;
