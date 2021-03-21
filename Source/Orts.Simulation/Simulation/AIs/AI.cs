@@ -382,7 +382,10 @@ namespace Orts.Simulation.AIs
 
                     //CJ
                     //if (fullsec % 3600 < 5) Trace.Write(" " + (fullsec / 3600).ToString("00") + ":00 ");
-                    if (fullsec % 3600 < Simulator.TimetablePeriodS) Trace.Write(" " + (fullsec / 3600).ToString("00") + ":00 ");
+                    if (fullsec % 3600 < Simulator.TimetablePeriodS)
+                    {
+                        Trace.WriteLine($"At {DateTime.Now} interval {Simulator.TimetablePeriodS} " + (fullsec / 3600).ToString("00") + ":00 ");
+                    }
 
                     endPreRun = AITTUpdate((float)(runTime - clockTime), PreUpdate, ref activeTrains);
 
