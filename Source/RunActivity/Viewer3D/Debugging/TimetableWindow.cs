@@ -596,38 +596,8 @@ namespace Orts.Viewer3D.Debugging
             var mDist = 5000f; var pDist = 50; //segment length when drawing path
 
             F.selectedTrainList.Clear();
-
-            if (F.simulator.TimetableMode)
-            {
-                // Add the player's train
-                if (F.simulator.PlayerLocomotive.Train is Orts.Simulation.AIs.AITrain)
-                    F.selectedTrainList.Add(F.simulator.PlayerLocomotive.Train as Orts.Simulation.AIs.AITrain);
-
-                //CJ
-                //// and all the other trains
-                //foreach (var train in F.simulator.AI.AITrains)
-                //    F.selectedTrainList.Add(train);
-                foreach (var train in F.simulator.Trains)
-                {
-                    //if (train.TrainType != Train.TRAINTYPE.PLAYER)
-                    //{
-                    //    var aiTrain = train as Simulation.AIs.AITrain;
-                    //    var state = "";
-                    //    if (aiTrain != null)
-                    //    {
-                    //        state = aiTrain.MovementState.ToString();
-                    //    }
-                    //    Debug.WriteLine($"{Program.Simulator.ClockTime} {train.Number} {train.TrainType} {train.Name} {state}");
-                    //}
-
-                    F.selectedTrainList.Add(train);
-                }
-            }
-            else
-            {
-                foreach (var train in F.simulator.Trains)
-                    F.selectedTrainList.Add(train);
-            }
+            foreach (var train in F.simulator.Trains)
+                F.selectedTrainList.Add(train);
 
             foreach (var train in F.selectedTrainList)
             {
@@ -687,7 +657,6 @@ namespace Orts.Viewer3D.Debugging
                 // Skip trains with no loco
                 if (locoCar == null)
                     continue;
-
 
                 worldPos = locoCar.WorldPosition;
                 var scaledTrain = new PointF();
@@ -768,69 +737,42 @@ namespace Orts.Viewer3D.Debugging
             }
         }
 
-        //private void SetTrainColor(Train t, TrainCar locoCar, TrainCar car)
-        //{
-        //    // Draw train in green with locos in brown
-        //    // HSL values
-        //    // Saturation: 100/100
-        //    // Hue: if loco then H=50/360 else H=120/360
-        //    // Lightness: if active then L=40/100 else L=30/100
-        //    // RGB values
-        //    // active loco: RGB 204,170,0
-        //    // inactive loco: RGB 153,128,0
-        //    // active car: RGB 0,204,0
-        //    // inactive car: RGB 0,153,0
-        //    if (IsActiveTrain(t as Simulation.AIs.AITrain))
-        //        if (car is MSTSLocomotive)
-        //            F.trainPen.Color = (car == locoCar) ? Color.FromArgb(204, 170, 0) : Color.FromArgb(153, 128, 0);
-        //        else
-        //            F.trainPen.Color = Color.FromArgb(0, 204, 0);
-        //    else
-        //        if (car is MSTSLocomotive)
-        //        F.trainPen.Color = Color.FromArgb(153, 128, 0);
-        //    else
-        //        F.trainPen.Color = Color.FromArgb(0, 153, 0);
-
-        //    // Draw player train with loco in red
-        //    if (t.TrainType == Train.TRAINTYPE.PLAYER && car == locoCar)
-        //        F.trainPen.Color = Color.Red;
-        //}
-
         private void SetTrainColor(Train t, TrainCar locoCar, TrainCar car)
         {
-            // Draw static trains in gray
-            // Draw inactive train in green with locos in brown
-            // Draw active trains in lighter shades
+            // Draw never-activated trains in gray
+            // Draw inactive trains in green with locos in brown
+            // Draw active trains in lighter shades, but only locos which are leading.
 
             // HSL values
             // Saturation: 100/100
             // Hue: if loco then H=50/360 else H=120/360
             // Lightness: if active then L=40/100 else L=30/100
-            // RGB values
 
-            // static train; RGB 127, 127, 127
+            // RGB values
+            // inactive train; RGB 127, 127, 127
             // active loco: RGB 204,170,0
             // inactive loco: RGB 153,128,0
             // active car: RGB 0,204,0
             // inactive car: RGB 0,153,0
 
-            if (IsStaticTrain(t as Simulation.AIs.AITrain))
+            if (IsNeverActiveTrain(t))
+                //if (locoCar != null) // ALSO WORKS
                 F.trainPen.Color = Color.FromArgb(127, 127, 127);
             else
-                if (IsActiveTrain(t as Simulation.AIs.AITrain))
-                    if (car is MSTSLocomotive)
-                        F.trainPen.Color = (car == locoCar) ? Color.FromArgb(204, 170, 0) : Color.FromArgb(153, 128, 0);
-                    else
-                        F.trainPen.Color = Color.FromArgb(0, 204, 0);
+                if (t.TrainType == Train.TRAINTYPE.PLAYER && car == locoCar)
+                    // Draw player train with loco in red
+                    F.trainPen.Color = Color.Red;
                 else
-                    if (car is MSTSLocomotive)
-                        F.trainPen.Color = Color.FromArgb(153, 128, 0);
+                    if (IsActiveTrain(t as Simulation.AIs.AITrain))
+                        if (car is MSTSLocomotive)
+                            F.trainPen.Color = (car == locoCar) ? Color.FromArgb(204, 170, 0) : Color.FromArgb(153, 128, 0);
+                        else
+                            F.trainPen.Color = Color.FromArgb(0, 204, 0);
                     else
-                        F.trainPen.Color = Color.FromArgb(0, 153, 0);
-
-            // Draw player train with loco in red
-            if (t.TrainType == Train.TRAINTYPE.PLAYER && car == locoCar)
-                F.trainPen.Color = Color.Red;
+                        if (car is MSTSLocomotive)
+                            F.trainPen.Color = Color.FromArgb(153, 128, 0);
+                        else
+                            F.trainPen.Color = Color.FromArgb(0, 153, 0);
         }
 
         /// <summary>
@@ -869,18 +811,16 @@ namespace Orts.Viewer3D.Debugging
             }
         }
 
-        //private bool IsActiveTrain(Simulation.AIs.AITrain t)
-        //{
-        //    if (t == null)
-        //        return false;
-
-        //    //CJ
-        //    //return (t.MovementState != Simulation.AIs.AITrain.AI_MOVEMENT_STATE.AI_STATIC
-        //    //            && !(t.TrainType == Train.TRAINTYPE.AI_INCORPORATED && !t.IncorporatingTrain.IsPathless)
-        //    //        )
-        //    //        || t.TrainType == Train.TRAINTYPE.PLAYER;
-        //    return true;
-        //}
+        private bool IsNeverActiveTrain(Train t)
+        {
+            if (F.simulator.TimetableMode)
+            {
+                var tTTrain = t as Orts.Simulation.Timetables.TTTrain;
+                return (tTTrain == null || tTTrain.ActivateTime == null);
+            }
+            else
+                return false;
+        }
 
         private bool IsActiveTrain(Simulation.AIs.AITrain t)
         {
@@ -891,15 +831,6 @@ namespace Orts.Viewer3D.Debugging
                         && !(t.TrainType == Train.TRAINTYPE.AI_INCORPORATED && !t.IncorporatingTrain.IsPathless)
                     )
                     || t.TrainType == Train.TRAINTYPE.PLAYER;
-        }
-
-        private bool IsStaticTrain(Simulation.AIs.AITrain t)
-        {
-            if (t == null)
-                return false;
-
-            return t.MovementState == Simulation.AIs.AITrain.AI_MOVEMENT_STATE.AI_STATIC
-                   || (t.TrainType == Train.TRAINTYPE.AI_INCORPORATED && !t.IncorporatingTrain.IsPathless);
         }
 
         private void ShowTrainNameAndState(Graphics g, PointF scaledItem, Train t, string trainName)
