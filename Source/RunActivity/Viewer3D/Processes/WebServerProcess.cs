@@ -63,9 +63,15 @@ namespace Orts.Viewer3D.Processes
             if (!Game.Settings.WebServer)
                 return;
 
+            //string myWebContentPath = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "Content\\Web");
+            //EndPointManager.UseIpv6 = true;
+            //using (EmbedIO.WebServer server = WebServer.CreateWebServer($"http://*:{Game.Settings.WebServerPort}", myWebContentPath))
+            //    server.RunAsync(StopServer.Token).Wait();
+
             string myWebContentPath = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "Content\\Web");
+            string contentPath = @"D:\OR\Routes\MSTS Independent Routes\CTN - WebContent\Web";
             EndPointManager.UseIpv6 = true;
-            using (EmbedIO.WebServer server = WebServer.CreateWebServer($"http://*:{Game.Settings.WebServerPort}", myWebContentPath))
+            using (EmbedIO.WebServer server = WebServer.CreateWebServer($"http://*:{Game.Settings.WebServerPort}", myWebContentPath, contentPath))
                 server.RunAsync(StopServer.Token).Wait();
         }
     }

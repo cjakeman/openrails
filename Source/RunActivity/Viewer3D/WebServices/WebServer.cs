@@ -49,7 +49,8 @@ namespace Orts.Viewer3D.WebServices
         /// <param name="url">The URL prefix to listen on.</param>
         /// <param name="path">The root directory to serve static files from.</param>
         /// <returns>The EmbedIO web server instance.</returns>
-        public static EmbedIO.WebServer CreateWebServer(string url, string path) => CreateWebServer(new string[] { url }, path);
+        //public static EmbedIO.WebServer CreateWebServer(string url, string path) => CreateWebServer(new string[] { url }, path);
+        public static EmbedIO.WebServer CreateWebServer(string url, string path, string contentPath = null) => CreateWebServer(new string[] { url }, path, contentPath);
 
         /// <summary>
         /// Create a web server with multiple listening addresses.
@@ -57,17 +58,25 @@ namespace Orts.Viewer3D.WebServices
         /// <param name="urls">A list of URL prefixes to listen on.</param>
         /// <param name="path">The root directory to serve static files from.</param>
         /// <returns>The EmbedIO web server instance.</returns>
-        public static EmbedIO.WebServer CreateWebServer(IEnumerable<string> urls, string path)
+        public static EmbedIO.WebServer CreateWebServer(IEnumerable<string> urls, string path, string contentPath = null)
         {
             // Viewer is not yet initialized in the GameState object - wait until it is
             while (Program.Viewer == null)
                 Thread.Sleep(1000);
 
-            return new EmbedIO.WebServer(o => o
+            return (contentPath == null)
+                ? new EmbedIO.WebServer(o => o
                     .WithUrlPrefixes(urls))
-                .WithWebApi("/API", SerializationCallback, m => m
+                    .WithWebApi("/API", SerializationCallback, m => m
                     .WithController(() => new ORTSApiController(Program.Viewer)))
-                .WithStaticFolder("/", path, true);
+                    .WithStaticFolder("/", path, true)
+                : new EmbedIO.WebServer(o => o
+                    .WithUrlPrefixes(urls))
+                    .WithWebApi("/API", SerializationCallback, m => m
+                    .WithController(() => new ORTSApiController(Program.Viewer)))
+                    //.WithStaticFolder("/Content/", @"D:\OR\Routes\MSTS Independent Routes\CTN - WebContent\Web", true)
+                    .WithStaticFolder("/Content/", contentPath, true)
+                    .WithStaticFolder("/", path, true);
         }
 
         /// <remarks>
