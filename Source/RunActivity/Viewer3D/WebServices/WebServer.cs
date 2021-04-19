@@ -74,8 +74,8 @@ namespace Orts.Viewer3D.WebServices
                     .WithUrlPrefixes(urls))
                     .WithWebApi("/API", SerializationCallback, m => m
                     .WithController(() => new ORTSApiController(Program.Viewer)))
-                    //.WithStaticFolder("/Content/", @"D:\OR\Routes\MSTS Independent Routes\CTN - WebContent\Web", true)
                     .WithStaticFolder("/Content/", contentPath, true)
+                    // This must come last in sequence
                     .WithStaticFolder("/", path, true);
         }
 
