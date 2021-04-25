@@ -210,6 +210,9 @@ namespace Orts.Viewer3D.Debugging
 				AddNewMessage(e.Time, e.Message);
 			};
 
+			//CJ
+			btnSeeInGame.Enabled = false;
+
 			tWindow.SelectedIndex = (MPManager.IsMultiPlayer()) ? 0 : 1;
 			TimetableWindow.SetControls();
 		}
@@ -1655,8 +1658,20 @@ namespace Orts.Viewer3D.Debugging
               float ySpeedCorr = Math.Abs(t.SpeedMpS) * yScale * 1.5f;
 
 			  if (tX < x - range-xSpeedCorr || tX > x + range+xSpeedCorr || tY < y - range-ySpeedCorr || tY > y + range+ySpeedCorr) continue;
-			  if (PickedTrain == null) PickedTrain = t;
-		  }
+				//if (PickedTrain == null) PickedTrain = t;
+
+				//CJ
+				if (PickedTrain == null)
+				{
+					PickedTrain = t;
+					btnSeeInGame.Enabled = true;
+					if (tWindow.SelectedIndex == 1)
+					{
+						TimetableWindow.SelectTrain(PickedTrain);
+					}
+				}
+				//btnSeeInGame.Enabled = (PickedTrain != null);
+			}
 		   //if a train is picked, will clear the avatar list selection
 		  if (PickedTrain != null)
 		  {
@@ -2230,12 +2245,19 @@ namespace Orts.Viewer3D.Debugging
 			Process.Start(psi);
 		}
 
-		/// <summary>
-		/// Provides a clip zone to stop user from pushing track fully out of window
-		/// </summary>
-		/// <param name="diffX"></param>
-		/// <param name="diffY"></param>
-		private void ClipDrag(int diffX, int diffY)
+		//CJ
+        private void btnViewInGame_Click(object sender, EventArgs e)
+        {
+			if (PickedTrain != null) ClickedTrain = true;
+			else ClickedTrain = false;
+		}
+
+        /// <summary>
+        /// Provides a clip zone to stop user from pushing track fully out of window
+        /// </summary>
+        /// <param name="diffX"></param>
+        /// <param name="diffY"></param>
+        private void ClipDrag(int diffX, int diffY)
         {
 			// Moving the mouse right means moving the ViewWindow left.
             var changeXm = -(float)(diffX / xScale);

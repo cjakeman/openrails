@@ -19,8 +19,10 @@ using Microsoft.Xna.Framework;
 using Orts.Formats.Msts;
 using Orts.MultiPlayer;
 using Orts.Simulation;
+using Orts.Simulation.AIs;
 using Orts.Simulation.Physics;
 using Orts.Simulation.RollingStocks;
+using Orts.Simulation.Timetables;
 using ORTS.Common;
 using System;
 using System.Collections.Generic;
@@ -39,6 +41,17 @@ namespace Orts.Viewer3D.Debugging
         {
             F = form;
         }
+
+        //CJ
+        public void SelectTrain(Train train)
+        {
+            var ttTrain = (TTTrain)train;
+            if (ttTrain != null)
+            {
+                F.lblBriefing.Text = ttTrain.Briefing;
+            }
+        }
+
 
         public void SetControls()
         {
@@ -112,6 +125,12 @@ namespace Orts.Viewer3D.Debugging
         {
             F.lblSimulationTimeText.Visible = timetableView;
             F.lblSimulationTime.Visible = timetableView;
+
+            //CJ
+            F.lblBriefingText.Visible = timetableView;
+            F.lblBriefing.Visible = timetableView;
+            F.btnViewInGame.Visible = timetableView;
+
             F.lblShow.Visible = timetableView;
             F.cbShowPlatforms.Visible = timetableView;
             F.cbShowPlatformLabels.Visible = timetableView;
@@ -301,8 +320,16 @@ namespace Orts.Viewer3D.Debugging
             return (location1.X > location2.X) ? location1 : location2;
         }
 
+        /// <summary>
+        /// Clears and recreates the map view. Called once every cycle.
+        /// </summary>
+        /// <param name="dragging"></param>
         public void GenerateTimetableView(bool dragging = false)
         {
+            //CJ
+            F.btnViewInGame.Enabled = (F.PickedTrain != null);
+
+
             AdjustControlLocations();
             ShowSimulationTime();
 
@@ -769,8 +796,9 @@ namespace Orts.Viewer3D.Debugging
             else
                 F.trainPen.Color = Color.FromArgb(0, 153, 0);
 
-            // Draw player train with loco in red
-            if (t.TrainType == Train.TRAINTYPE.PLAYER && car == locoCar)
+            // Draw player train with loco or selected train in red
+            if ((t.TrainType == Train.TRAINTYPE.PLAYER && car == locoCar)
+                || t == F.PickedTrain)
                 F.trainPen.Color = Color.Red;
         }
 
