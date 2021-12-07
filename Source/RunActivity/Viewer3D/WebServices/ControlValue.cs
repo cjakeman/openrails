@@ -17,6 +17,7 @@
 
 using Orts.Viewer3D.RollingStock;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Orts.Viewer3D.WebServices
 {
@@ -41,15 +42,15 @@ namespace Orts.Viewer3D.WebServices
         public static IList<ControlValue> GetWebControlValueList(this MSTSLocomotiveViewer viewer)
         {
             var controlValueList = new List<ControlValue>();
-            foreach (var controlRenderer in viewer._CabRenderer.ControlMap.Values)
-            {
+            
+            // Avoid duplicated control types by grouping on the control type and selecting just the first one of each group
+            foreach (var controlRenderer in viewer._CabRenderer.ControlMap.Values.GroupBy(r => r.GetControlType()).Select(r => r.First()))
                 controlValueList.Add(new ControlValue
                     { TypeName = controlRenderer.GetControlType().ToString()
                     , MinValue = controlRenderer.Control.MinValue
                     , MaxValue = controlRenderer.Control.MaxValue
                     , RangeFraction = controlRenderer.GetRangeFraction()
                     });
-            }
             return controlValueList;
         }
     }
