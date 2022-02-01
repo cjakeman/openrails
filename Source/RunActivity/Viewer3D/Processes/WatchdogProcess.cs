@@ -139,8 +139,9 @@ namespace Orts.Viewer3D.Processes
                     // Abandon ship!
                     if (Debugger.IsAttached)
                         Debugger.Break();
-                    else
-                        Environment.Exit(1);
+                    //CJ Watchdog disabled for DocMartin 02/02/2022
+                    //else
+                    //    Environment.Exit(1);
                 }
             }
         }
