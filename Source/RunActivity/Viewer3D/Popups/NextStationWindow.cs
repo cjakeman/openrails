@@ -25,6 +25,8 @@ using Orts.Simulation.Signalling;
 using ORTS.Common;
 using System;
 using System.Collections.Generic;
+using ORTS.Common.Input;
+using System.Threading.Tasks;
 
 namespace Orts.Viewer3D.Popups
 {
@@ -55,6 +57,8 @@ namespace Orts.Viewer3D.Popups
         Label StationNextDepartScheduled;
 
         Label Message;
+
+        public bool SpeechRequired;
 
         public NextStationWindow(WindowManager owner)
             : base(owner, Window.DecorationSize.X + owner.TextFontDefault.Height * 34, Window.DecorationSize.Y + owner.TextFontDefault.Height * 6 + ControlLayout.SeparatorSize * 2, Viewer.Catalog.GetString("Next Station"))
@@ -650,7 +654,71 @@ namespace Orts.Viewer3D.Popups
                         Message.Text = Viewer.Catalog.GetString("Activity completed.");
                     }
                 }
+                if (SpeechRequired)
+                {
+                    Task.Run( () => Speak());
+                    SpeechRequired = false;
+                }
             }
+        }
+
+        private void Speak()
+        {
+            var synthesizer = new System.Speech.Synthesis.SpeechSynthesizer();
+            synthesizer.SetOutputToDefaultAudioDevice();
+            synthesizer.Volume = 100;
+
+            var clock = (int)Owner.Viewer.Simulator.ClockTime;
+            var seconds = clock % 60;
+            var minutes = clock % (60 * 60) / 60;
+            var hours = clock % (60 * 60 * 24) / (60 * 60);
+            synthesizer.Speak($"Time. {hours}. {minutes}. {seconds}"); // Full stops to add brief pause
+
+            if (String.IsNullOrEmpty(StationPreviousDepartActual.Text) // Start of passenger activity
+                || String.IsNullOrEmpty(StationCurrentArriveActual.Text) == false) // Arrived in current station
+            {
+                if (String.IsNullOrEmpty(StationCurrentName.Text) == false) synthesizer.Speak($"This station {StationCurrentName.Text}");
+            }
+            else
+            {
+                if (String.IsNullOrEmpty(StationCurrentName.Text) == false) synthesizer.Speak($"Next station {StationCurrentName.Text}");
+            }
+
+            if (String.IsNullOrEmpty(StationPreviousDepartActual.Text)) // Train has left first station
+            {
+                var scheduledArrival = StationCurrentArriveScheduled.Text;
+                if (String.IsNullOrEmpty(scheduledArrival) == false)
+                {
+                    int arrivalHrs = Convert.ToInt32(scheduledArrival.Substring(0, 2));
+                    int arrivalMins = Convert.ToInt32(scheduledArrival.Substring(3, 2));
+                    synthesizer.Speak($"To arrive at{arrivalHrs} {arrivalMins}");
+                }
+                if (String.IsNullOrEmpty(StationCurrentDistance.Text) == false)
+                {
+                    var numberText = StationCurrentDistance.Text.Substring(0, StationCurrentDistance.Text.Length - 3); // Trim off " km"
+                    double distance = Convert.ToDouble(numberText);
+                    synthesizer.Speak($"Distance {distance}");
+                }
+                var actualArrival = StationCurrentArriveActual.Text;
+                if (String.IsNullOrEmpty(actualArrival) == false)
+                {
+                    int arrivalHrs = Convert.ToInt32(actualArrival.Substring(0, 2));
+                    int arrivalMins = Convert.ToInt32(actualArrival.Substring(3, 2));
+                    synthesizer.Speak($"Actually arrived at{arrivalHrs} {arrivalMins}");
+                }
+            }
+
+            var boarding = "Passenger boarding completes in ";
+            if (Message.Text.StartsWith(boarding))
+            {
+                int boardingMins = Convert.ToInt32(Message.Text.Substring(boarding.Length, 2));
+                int boardingSecs = Convert.ToInt32(Message.Text.Substring(boarding.Length + 3, 2));
+                synthesizer.Speak($"{boarding} {boardingMins}. {boardingSecs}");
+            }
+            else
+                if (String.IsNullOrEmpty(Message.Text) == false) synthesizer.Speak($"{Message.Text}");
+            //SpeechRequired = false;
+            Visible = false;
         }
 
         public static Color GetArrivalColor(DateTime expected, DateTime? actual)
