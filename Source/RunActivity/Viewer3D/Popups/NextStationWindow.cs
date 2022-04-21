@@ -668,23 +668,37 @@ namespace Orts.Viewer3D.Popups
             synthesizer.SetOutputToDefaultAudioDevice();
             synthesizer.Volume = 100;
 
+            var timeText = "Time";
+            var actualText = "Actually arrived at";
+            var boardingText = "Passenger boarding completes in ";
+            var thisStationText = "This station";
+            var nextStationText = "Next station";
+            if (Viewer.Catalog.GetString("Next Station") == "Prossima stazione")
+            {
+                timeText = "Ora";
+                actualText = "Veramente arrivato a";
+                boardingText = "Salita passeggeri completata in ";
+                thisStationText = "Questa stazione";
+                nextStationText = "Prossima stazione";
+            }
+
             var clock = (int)Owner.Viewer.Simulator.ClockTime;
             var seconds = clock % 60;
             var minutes = clock % (60 * 60) / 60;
             var hours = clock % (60 * 60 * 24) / (60 * 60);
-            synthesizer.Speak($"Time. {hours}. {minutes}. {seconds}"); // Full stops to add brief pause
+            synthesizer.Speak($"{timeText}. {hours}. {minutes}. {seconds}"); // Full stops to add brief pause
 
             if (String.IsNullOrEmpty(StationPreviousDepartActual.Text) // Start of passenger activity
                 || String.IsNullOrEmpty(StationCurrentArriveActual.Text) == false) // Arrived in current station
             {
-                if (String.IsNullOrEmpty(StationCurrentName.Text) == false) synthesizer.Speak($"This station {StationCurrentName.Text}");
+                if (String.IsNullOrEmpty(StationCurrentName.Text) == false) synthesizer.Speak($"{thisStationText} {StationCurrentName.Text}");
             }
             else
             {
-                if (String.IsNullOrEmpty(StationCurrentName.Text) == false) synthesizer.Speak($"Next station {StationCurrentName.Text}");
+                if (String.IsNullOrEmpty(StationCurrentName.Text) == false) synthesizer.Speak($"{nextStationText} {StationCurrentName.Text}");
             }
 
-            if (String.IsNullOrEmpty(StationPreviousDepartActual.Text)) // Train has left first station
+            if (String.IsNullOrEmpty(StationPreviousDepartActual.Text) == false) // Train has left first station
             {
                 var scheduledArrival = StationCurrentArriveScheduled.Text;
                 if (String.IsNullOrEmpty(scheduledArrival) == false)
@@ -704,16 +718,15 @@ namespace Orts.Viewer3D.Popups
                 {
                     int arrivalHrs = Convert.ToInt32(actualArrival.Substring(0, 2));
                     int arrivalMins = Convert.ToInt32(actualArrival.Substring(3, 2));
-                    synthesizer.Speak($"Actually arrived at{arrivalHrs} {arrivalMins}");
+                    synthesizer.Speak($"{actualText} {arrivalHrs} {arrivalMins}");
                 }
             }
 
-            var boarding = "Passenger boarding completes in ";
-            if (Message.Text.StartsWith(boarding))
+            if (Message.Text.StartsWith(boardingText))
             {
-                int boardingMins = Convert.ToInt32(Message.Text.Substring(boarding.Length, 2));
-                int boardingSecs = Convert.ToInt32(Message.Text.Substring(boarding.Length + 3, 2));
-                synthesizer.Speak($"{boarding} {boardingMins}. {boardingSecs}");
+                int boardingMins = Convert.ToInt32(Message.Text.Substring(boardingText.Length, 2));
+                int boardingSecs = Convert.ToInt32(Message.Text.Substring(boardingText.Length + 3, 2));
+                synthesizer.Speak($"{boardingText} {boardingMins}. {boardingSecs}");
             }
             else
                 if (String.IsNullOrEmpty(Message.Text) == false) synthesizer.Speak($"{Message.Text}");
