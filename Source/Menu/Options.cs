@@ -177,9 +177,9 @@ namespace ORTS
             trackAntiAliasing.Value = Settings.AntiAliasing;
             trackAntiAliasing_ValueChanged(null, null);
             checkDoubleWire.Checked = Settings.DoubleWire;
+            checkSignalLightGlow.Checked = Settings.SignalLightGlow;
 
             // Simulation tab
-
             checkSimpleControlsPhysics.Checked = Settings.SimpleControlPhysics;
             checkUseAdvancedAdhesion.Checked = Settings.UseAdvancedAdhesion;
             labelAdhesionMovingAverageFilterSize.Enabled = checkUseAdvancedAdhesion.Checked;
@@ -313,7 +313,6 @@ namespace ORTS
             numericPerformanceTunerTarget.Value = Settings.PerformanceTunerTarget;
             trackLODBias.Value = Settings.LODBias;
             trackLODBias_ValueChanged(null, null);
-            checkSignalLightGlow.Checked = Settings.SignalLightGlow;
             checkPreferDDSTexture.Checked = Settings.PreferDDSTexture;
             checkUseLocationPassingPaths.Checked = Settings.UseLocationPassingPaths;
             checkUseMSTSEnv.Checked = Settings.UseMSTSEnv;

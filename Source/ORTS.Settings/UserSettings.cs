@@ -218,6 +218,8 @@ namespace ORTS.Settings
         public int DayAmbientLight { get; set; }
         [Default(AntiAliasingMethod.MSAA2x)]
         public int AntiAliasing { get; set; }
+        [Default(false)]
+        public bool SignalLightGlow { get; set; }
 
         // Simulation settings:
 
@@ -307,8 +309,6 @@ namespace ORTS.Settings
         public bool UseLocationPassingPaths { get; set; }
         [Default(false)]
         public bool UseMSTSEnv { get; set; }
-        [Default(false)]
-        public bool SignalLightGlow { get; set; }
         [Default(130)]
         public int AdhesionFactor { get; set; }
         [Default(10)]
