@@ -1465,15 +1465,18 @@ namespace Orts.Viewer3D.Processes
                 }
                 loadingScreen = loadingScreen == null ? defaultScreen : loadingScreen;
                 var path = Path.Combine(Simulator.RoutePath, loadingScreen);
+
+                // If OR is told to fetch a DDS and none found, returns null.
                 if (Path.GetExtension(path) == ".dds" && File.Exists(path))
                 {
                     DDSLib.DDSFromFile(path, gd, true, out texture);
                 }
+                // If OR is told to fetch a ACE, will look first for a DDS and if none found, then looks for an ACE file instead.
                 else if (Path.GetExtension(path) == ".ace")
                 {
                     var alternativeTexture = Path.ChangeExtension(path, ".dds");
 
-                    if (File.Exists(alternativeTexture) && game.Settings.PreferDDSTexture)
+                    if (File.Exists(alternativeTexture))
                     {
                         DDSLib.DDSFromFile(alternativeTexture, gd, true, out texture);
                     }

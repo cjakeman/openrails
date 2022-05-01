@@ -59,8 +59,9 @@ namespace Orts.Viewer3D.Common
             }
             else if (!String.IsNullOrEmpty(nightTexturePath + textureName) && Path.GetExtension(nightTexturePath + textureName) == ".ace")
             {
+                // If OR is told to fetch a ACE, will look first for a DDS and if none found, then looks for an ACE file instead.
                 var alternativeTexture = Path.ChangeExtension(nightTexturePath + textureName, ".dds");
-                if (simulator.Settings.PreferDDSTexture && !String.IsNullOrEmpty(alternativeTexture.ToLower()) && File.Exists(alternativeTexture))
+                if (!String.IsNullOrEmpty(alternativeTexture.ToLower()) && File.Exists(alternativeTexture))
                 {
                     return alternativeTexture;
                 }

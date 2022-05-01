@@ -65,6 +65,7 @@ namespace Orts.Viewer3D
                 try
                 {
                     Texture2D texture;
+                    // If OR is told to fetch a DDS and none found, then looks for an ACE file instead.
                     if (Path.GetExtension(path) == ".dds")
                     {
                         if (File.Exists(path))
@@ -84,11 +85,12 @@ namespace Orts.Viewer3D
                             else texture = defaultTexture;
                         }
                     }
+                    // If OR is told to fetch a ACE, will look first for a DDS and if none found, then looks for an ACE file instead.
                     else if (Path.GetExtension(path) == ".ace")
                     {
                         var alternativeTexture = Path.ChangeExtension(path, ".dds");
                         
-                        if (Viewer.Settings.PreferDDSTexture && File.Exists(alternativeTexture))
+                        if (File.Exists(alternativeTexture))
                         {
                             DDSLib.DDSFromFile(alternativeTexture, GraphicsDevice, true, out texture);
                         }
