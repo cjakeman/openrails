@@ -427,20 +427,6 @@ This option is checked by default.
 Note: Unchecking the option has no effect when in 
 :ref:`Timetable mode <timetable>`.
 
-.. _options-open-doors-ai:
-
-Open/close doors on AI trains
------------------------------
-
-This option enables door open/close at station stops on AI trains having passenger
-trainsets with door animation. Doors are opened 4 seconds after train stop and closed
-10 seconds before train start. Due to the fact that not all routes have been built with
-correct indication of the platform side with respect to the track, this option can be
-individually disabled or enabled on a per-route basis, as explained
-:ref:`here <features-route-open-doors-ai>`.
-With option enabled, doors open and
-close automatically also when a player train is in :ref:`autopilot mode <driving-autopilot>`.
-The option is active only in activity mode.
 
 .. _options-location-linked-passing-path:
 

@@ -323,8 +323,6 @@ namespace ORTS.Settings
         public int PrecipitationBoxLength { get; set; }
         [Default(false)]
         public bool CorrectQuestionableBrakingParams { get; set; }
-        [Default(false)]
-        public bool OpenDoorsInAITrains { get; set; }
         [Default(0)]
         public int ActRandomizationLevel { get; set; }
         [Default(0)]

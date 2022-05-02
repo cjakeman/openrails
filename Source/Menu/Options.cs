@@ -189,7 +189,6 @@ namespace ORTS
             checkCurveSpeedDependent.Checked = Settings.CurveSpeedDependent;
             checkBoilerPreheated.Checked = Settings.HotStart;
             checkForcedRedAtStationStops.Checked = !Settings.NoForcedRedAtStationStops;
-            checkDoorsAITrains.Checked = Settings.OpenDoorsInAITrains;
             checkDieselEnginesStarted.Checked = !Settings.NoDieselEngineStart; // Inverted as "EngineStart" is better UI than "NoEngineStart"
 
             // Keyboard tab
@@ -462,7 +461,6 @@ namespace ORTS
             Settings.CurveSpeedDependent = checkCurveSpeedDependent.Checked;
             Settings.HotStart = checkBoilerPreheated.Checked;
             Settings.NoForcedRedAtStationStops = !checkForcedRedAtStationStops.Checked;
-            Settings.OpenDoorsInAITrains = checkDoorsAITrains.Checked;
             Settings.NoDieselEngineStart = !checkDieselEnginesStarted.Checked; // Inverted as "EngineStart" is better UI than "NoEngineStart"
 
             // Keyboard tab

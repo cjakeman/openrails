@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.buttonOK = new System.Windows.Forms.Button();
             this.numericBrakePipeChargingRate = new System.Windows.Forms.NumericUpDown();
             this.lBrakePipeChargingRate = new System.Windows.Forms.Label();
@@ -101,7 +101,6 @@
             this.checkDieselEnginesStarted = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.checkUseLocationPassingPaths = new System.Windows.Forms.CheckBox();
-            this.checkDoorsAITrains = new System.Windows.Forms.CheckBox();
             this.checkForcedRedAtStationStops = new System.Windows.Forms.CheckBox();
             this.checkBoilerPreheated = new System.Windows.Forms.CheckBox();
             this.checkSimpleControlsPhysics = new System.Windows.Forms.CheckBox();
@@ -1146,7 +1145,7 @@
             this.checkElectricPowerConnected.Checked = true;
             this.checkElectricPowerConnected.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkElectricPowerConnected.Enabled = false;
-            this.checkElectricPowerConnected.Location = new System.Drawing.Point(26, 238);
+            this.checkElectricPowerConnected.Location = new System.Drawing.Point(26, 181);
             this.checkElectricPowerConnected.Name = "checkElectricPowerConnected";
             this.checkElectricPowerConnected.Size = new System.Drawing.Size(153, 17);
             this.checkElectricPowerConnected.TabIndex = 11;
@@ -1156,7 +1155,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 169);
+            this.label4.Location = new System.Drawing.Point(6, 112);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(161, 13);
             this.label4.TabIndex = 10;
@@ -1165,7 +1164,9 @@
             // checkDieselEnginesStarted
             // 
             this.checkDieselEnginesStarted.AutoSize = true;
-            this.checkDieselEnginesStarted.Location = new System.Drawing.Point(26, 215);
+            this.checkDieselEnginesStarted.Checked = true;
+            this.checkDieselEnginesStarted.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkDieselEnginesStarted.Location = new System.Drawing.Point(26, 158);
             this.checkDieselEnginesStarted.Name = "checkDieselEnginesStarted";
             this.checkDieselEnginesStarted.Size = new System.Drawing.Size(142, 17);
             this.checkDieselEnginesStarted.TabIndex = 9;
@@ -1175,7 +1176,6 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.checkUseLocationPassingPaths);
-            this.groupBox1.Controls.Add(this.checkDoorsAITrains);
             this.groupBox1.Controls.Add(this.checkForcedRedAtStationStops);
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(324, 6);
@@ -1189,23 +1189,12 @@
             // 
             this.checkUseLocationPassingPaths.AutoSize = true;
             this.checkUseLocationPassingPaths.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkUseLocationPassingPaths.Location = new System.Drawing.Point(6, 71);
+            this.checkUseLocationPassingPaths.Location = new System.Drawing.Point(6, 48);
             this.checkUseLocationPassingPaths.Name = "checkUseLocationPassingPaths";
             this.checkUseLocationPassingPaths.Size = new System.Drawing.Size(215, 17);
             this.checkUseLocationPassingPaths.TabIndex = 46;
             this.checkUseLocationPassingPaths.Text = "Location-linked passing path processing";
             this.checkUseLocationPassingPaths.UseVisualStyleBackColor = true;
-            // 
-            // checkDoorsAITrains
-            // 
-            this.checkDoorsAITrains.AutoSize = true;
-            this.checkDoorsAITrains.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkDoorsAITrains.Location = new System.Drawing.Point(6, 46);
-            this.checkDoorsAITrains.Name = "checkDoorsAITrains";
-            this.checkDoorsAITrains.Size = new System.Drawing.Size(163, 17);
-            this.checkDoorsAITrains.TabIndex = 45;
-            this.checkDoorsAITrains.Text = "Open/close doors in AI trains";
-            this.checkDoorsAITrains.UseVisualStyleBackColor = true;
             // 
             // checkForcedRedAtStationStops
             // 
@@ -1221,7 +1210,9 @@
             // checkBoilerPreheated
             // 
             this.checkBoilerPreheated.AutoSize = true;
-            this.checkBoilerPreheated.Location = new System.Drawing.Point(26, 192);
+            this.checkBoilerPreheated.Checked = true;
+            this.checkBoilerPreheated.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoilerPreheated.Location = new System.Drawing.Point(26, 135);
             this.checkBoilerPreheated.Name = "checkBoilerPreheated";
             this.checkBoilerPreheated.Size = new System.Drawing.Size(144, 17);
             this.checkBoilerPreheated.TabIndex = 8;
@@ -1231,7 +1222,7 @@
             // checkSimpleControlsPhysics
             // 
             this.checkSimpleControlsPhysics.AutoSize = true;
-            this.checkSimpleControlsPhysics.Location = new System.Drawing.Point(6, 279);
+            this.checkSimpleControlsPhysics.Location = new System.Drawing.Point(6, 222);
             this.checkSimpleControlsPhysics.Name = "checkSimpleControlsPhysics";
             this.checkSimpleControlsPhysics.Size = new System.Drawing.Size(156, 17);
             this.checkSimpleControlsPhysics.TabIndex = 8;
@@ -1241,7 +1232,7 @@
             // checkCurveSpeedDependent
             // 
             this.checkCurveSpeedDependent.AutoSize = true;
-            this.checkCurveSpeedDependent.Location = new System.Drawing.Point(6, 100);
+            this.checkCurveSpeedDependent.Location = new System.Drawing.Point(6, 77);
             this.checkCurveSpeedDependent.Name = "checkCurveSpeedDependent";
             this.checkCurveSpeedDependent.Size = new System.Drawing.Size(160, 17);
             this.checkCurveSpeedDependent.TabIndex = 5;
@@ -1710,27 +1701,27 @@
             this.dataGridViewContent.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridViewContent.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.dataGridViewContent.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewContent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewContent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.dataGridViewContent.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dataGridViewContent.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.nameDataGridViewTextBoxColumn,
             this.pathDataGridViewTextBoxColumn});
             this.dataGridViewContent.DataSource = this.bindingSourceContent;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewContent.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewContent.DefaultCellStyle = dataGridViewCellStyle6;
             this.dataGridViewContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewContent.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewContent.MultiSelect = false;
@@ -2572,7 +2563,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.CheckBox checkDoubleWire;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckBox checkDoorsAITrains;
         private System.Windows.Forms.CheckBox checkForcedRedAtStationStops;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.NumericUpDown numericActRandomizationLevel;

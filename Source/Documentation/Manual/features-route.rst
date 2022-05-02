@@ -748,23 +748,32 @@ The feature is explained :ref:`here<options-open-doors-ai>`.
 .. index::
    single: ORTSOpenDoorsInAITrains
 
-To override the selection made in the 
-:ref:`Experimental Options Window<options-experimental>`, a command line must be inserted 
+AI trains having passenger trainsets with door animation will open their doors automatically
+when stopped in a station platform. Doors are opened 4 seconds after train stop and closed
+10 seconds before train start. 
+
+There are some routes which have not been built with the correct indication of the platform side 
+so doors open on the wrong side. To help with this, automatic opening can be disabled for
+individual routes as explained below.
+
+Doors open and close automatically also when a player train is in :ref:`autopilot mode <driving-autopilot>`.
+
+To disable automatic openeing, a command line must be inserted 
 in a small integration .trk file, that must be located in an Openrails subfolder within 
 the route's folder, and must have the same name as the base folder. Here below an example
 of such file::
 
   
   include ( "../Platformtest.trk" )
-  			ORTSOpenDoorsInAITrains ( 1 )
+  			ORTSOpenDoorsInAITrains ( 0 )
 
 The first line must be empty.
 
-``ORTSOpenDoorsInAITrains ( 1 )`` forces door open/close for this route even if the 
-option within the Experimental Options Window is not checked.
+``ORTSOpenDoorsInAITrains ( 0 )`` disables door open/close for this route.
 
-``ORTSOpenDoorsInAITrains ( 0 )`` disables door open/close for this route even if the 
-option within the Experimental Options Window is checked.
+``ORTSOpenDoorsInAITrains ( 1 )`` enables door open/close for this route. 
+It can be omitted as this is the default condition.
+
 
 .. _features-route-remove-trees:
 

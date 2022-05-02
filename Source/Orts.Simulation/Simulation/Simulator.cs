@@ -289,7 +289,11 @@ namespace Orts.Simulation
             TRK = new RouteFile(MSTS.MSTSPath.GetTRKFileName(RoutePath));
             RouteName = TRK.Tr_RouteFile.Name;
             MilepostUnitsMetric = TRK.Tr_RouteFile.MilepostUnitsMetric;
-            OpenDoorsInAITrains = TRK.Tr_RouteFile.OpenDoorsInAITrains == null ? Settings.OpenDoorsInAITrains : (bool)TRK.Tr_RouteFile.OpenDoorsInAITrains;
+
+            // For AI trains, passenger doors are opened at platforms by default.
+            // Some legacy routes will then open the doors on the wrong side, but they can be disabled by this command in the Route (TRK) file
+            // ORTSOpenDoorsInAITrains ( 0 )
+            OpenDoorsInAITrains = TRK.Tr_RouteFile.OpenDoorsInAITrains == null ? true : (bool)TRK.Tr_RouteFile.OpenDoorsInAITrains;
 
             Trace.Write(" TDB");
             TDB = new TrackDatabaseFile(RoutePath + @"\" + TRK.Tr_RouteFile.FileName + ".tdb");

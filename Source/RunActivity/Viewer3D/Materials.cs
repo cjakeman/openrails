@@ -545,7 +545,10 @@ namespace Orts.Viewer3D
             {
                 SceneryShader.Overcast = Viewer.World.MSTSSky.mstsskyovercastFactor;
                 SceneryShader.SetFog(Viewer.World.MSTSSky.mstsskyfogDistance, ref SharedMaterialManager.FogColor);
+
+                // Why does this statement not use Viewer.World.MSTSSky.mstsskyfogDistance ?
                 ParticleEmitterShader.SetFog(Viewer.Simulator.Weather.FogDistance, ref SharedMaterialManager.FogColor);
+
                 SceneryShader.ViewerPos = Viewer.Camera.XnaLocation(Viewer.Camera.CameraWorldLocation);
             }
         }
