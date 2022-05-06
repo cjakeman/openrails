@@ -51,6 +51,7 @@ namespace Orts.Parsers.OR
         JsonTextReader _reader;
         StringBuilder _path;
         Stack<int> _pathPositions;
+        int _countWarnings;
 
         /// <summary>
         /// Contains a condensed account of the position of the current item in the JSO, such as when parsing "Clear" from a WeatherFile:
@@ -133,6 +134,13 @@ namespace Orts.Parsers.OR
                         break;
                 }
             }
+        }
+
+        public bool TryRead<T>(Func<JsonReader, T> read, out T output)
+        {
+            var warnings = _countWarnings;
+            output = read(this);
+            return warnings == _countWarnings;
         }
 
         public T AsEnum<T>(T defaultValue)
@@ -225,9 +233,11 @@ namespace Orts.Parsers.OR
                         vector3.Y = AsFloat(0f);
                     if (_reader.Read())
                         vector3.Z = AsFloat(0f);
+                    if (!_reader.Read() || _reader.TokenType != JsonToken.EndArray)
+                        goto default; // We did not have exactly 3 items in the array
                     return vector3;
                 default:
-                    TraceWarning($"Expected [ in {Path}; got {_reader.TokenType}");
+                    TraceWarning($"Expected Vector3 (3 item array) in {Path}; got {_reader.TokenType}");
                     return defaultValue;
             }
         }
@@ -235,6 +245,7 @@ namespace Orts.Parsers.OR
         public void TraceWarning(string message)
         {
             Trace.TraceWarning("{2} in {0}:line {1}", _fileName, _reader.LineNumber, message);
+            _countWarnings++;
         }
 
         public void TraceInformation(string message)
