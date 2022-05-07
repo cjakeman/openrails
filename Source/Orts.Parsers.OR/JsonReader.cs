@@ -76,6 +76,7 @@ namespace Orts.Parsers.OR
         /// <summary>
         /// Reads next token and stores in _reader.TokenType, _reader.ValueType, _reader.Value
         /// Throws exception if value not as expected.
+        /// PropertyNames are case-sensitive.
         /// </summary>
         /// <param name="tryParse"></param>
         public void ReadBlock(Func<JsonReader, bool> tryParse)
@@ -235,9 +236,14 @@ namespace Orts.Parsers.OR
                         vector3.Z = AsFloat(0f);
                     if (!_reader.Read() || _reader.TokenType != JsonToken.EndArray)
                         goto default; // We did not have exactly 3 items in the array
+                    _path.Length = _pathPositions.Pop();
                     return vector3;
                 default:
                     TraceWarning($"Expected Vector3 (3 item array) in {Path}; got {_reader.TokenType}");
+
+                    // If the end of the array is not found in the right position, then parsing of subsequence objects also fails.
+                    TraceWarning($"Subsequent objects may be skipped");
+                    
                     return defaultValue;
             }
         }

@@ -16,14 +16,7 @@
 // along with Open Rails.  If not, see <http://www.gnu.org/licenses/>.
 
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Orts.Parsers.Msts;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using JsonReader = Orts.Parsers.OR.JsonReader;
 
 namespace Orts.Formats.OR
@@ -39,7 +32,7 @@ namespace Orts.Formats.OR
         public List<Container> Containers = new List<Container>();
 
         /// <summary>
-        /// Reads JSON file, parsing valid data into containerShapeList and logging errors.
+        /// Reads JSON file, parsing valid containers into Containers list, skipping any with invalid data and logging warnings.
         /// </summary>
         /// <param name="filename"></param>
         public ContainersFile(string filename)
@@ -48,7 +41,7 @@ namespace Orts.Formats.OR
         }
 
         /// <summary>
-        /// Parses next item from JSON data, populating a list of Containers and issuing warning messages.
+        /// Parses next container from JSON data, populating a list of Containers and issuing warning messages.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -61,6 +54,7 @@ namespace Orts.Formats.OR
                     // Ignore these items. "[]" is found along the way to "[]."
                     break;
                 case "[].":
+                    // Add to list any container with no warnings.
                     if (item.TryRead(json => new Container(json), out var container))
                         Containers.Add(container);
                     break;
@@ -82,41 +76,54 @@ namespace Orts.Formats.OR
 
     public class Container
     {
+        // As these properties are required (as assumed for this example), they have placeholder values.
+        // if the value persists, then the property was not found.
         public int Id = -1;
         public string Name = "";
         public ContainerType Type = ContainerType.MissingType;
         public bool Flipped;
-        public Vector3 Location;
+        public Vector3 Location = new Vector3(float.NaN, float.NaN, float.NaN);
 
         /// <summary>
-        /// Give properties to a new Container which can be tested for missing entries
+        /// Creates a new Container from JSON and tests for missing entries for required properties.
         /// </summary>
         public Container(JsonReader json)
         {
             json.ReadBlock(TryParse);
 
-            // These warnings apply to the entire object and will be reported on the "}"
-            if (Id < 0) json.TraceWarning($"Skipped container missing property ID");
-            if (Name.Length == 0) json.TraceWarning($"Skipped container missing property Name");
-            if (Type == ContainerType.MissingType) json.TraceWarning($"Skipped container missing property Type");
-            if (Location == Vector3.Zero) json.TraceWarning($"Skipped container missing property Location");
+            // These warnings apply to the entire object and will be reported on the EndObject token "}"
+            if (Id == -1) json.TraceWarning($"Skipped container as missing property ID");
+            if (Name == "") json.TraceWarning($"Skipped container as missing property Name");
+            if (Type == ContainerType.MissingType) json.TraceWarning($"Skipped container as missing property Type");
+            if (Location == new Vector3(float.NaN, float.NaN, float.NaN)) json.TraceWarning($"Skipped container as missing property Location");
         }
 
+        /// <summary>
+        /// Parses the properties of a Container.
+        /// PropertyNames are case-sensitive.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         protected virtual bool TryParse(JsonReader item)
         {
             switch (item.Path)
             {
-                case "id": Id = item.AsInteger(Id); break;
-                case "name":
+                case "Id": Id = item.AsInteger(Id); break;
+                case "Name":
                     Name = item.AsString(Name);
                     // Include any warning for invalid names here. For example:
                     if (string.IsNullOrWhiteSpace(Name) || Name.Contains(" "))
                         item.TraceWarning($"Skipped container with invalid name \"{Name}\"");
                     break;
-                case "type": Type = item.AsEnum(Type); break;
-                case "flipped": Flipped = item.AsBoolean(Flipped); break;
-                case "location[]": Location = item.AsVector3(Location); break;
-                default: return false;
+                case "Type": Type = item.AsEnum(Type); break;
+                case "Flipped": Flipped = item.AsBoolean(Flipped); break;
+                case "Location[]": Location = item.AsVector3(Location); break;
+
+                // This default warns of unexpected properties and skips them.
+                default: item.TraceInformation($"Skipped unexpected property \"{item.Path}\""); break;
+
+                // This default rejects objects containing unexpected properties
+                //default: return false;
             }
             return true;
         }
