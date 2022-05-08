@@ -78,11 +78,14 @@ namespace Orts.Formats.OR
     {
         // As these properties are required (as assumed for this example), they have placeholder values.
         // if the value persists, then the property was not found.
+        //Required properties
         public int Id = -1;
         public string Name = "";
         public ContainerType Type = ContainerType.MissingType;
-        public bool Flipped;
         public Vector3 Location = new Vector3(float.NaN, float.NaN, float.NaN);
+
+        // Optional properties
+        public bool Flipped;
 
         /// <summary>
         /// Creates a new Container from JSON and tests for missing entries for required properties.
@@ -118,12 +121,7 @@ namespace Orts.Formats.OR
                 case "Type": Type = item.AsEnum(Type); break;
                 case "Flipped": Flipped = item.AsBoolean(Flipped); break;
                 case "Location[]": Location = item.AsVector3(Location); break;
-
-                // This default warns of unexpected properties and skips them.
-                default: item.TraceInformation($"Skipped unexpected property \"{item.Path}\""); break;
-
-                // This default rejects objects containing unexpected properties
-                //default: return false;
+                default: return false;
             }
             return true;
         }
