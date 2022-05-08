@@ -1,21 +1,75 @@
 [
   {
-    "id": 1,
-    "name": "Container_1",
-    "type": "closed",
-    "flipped": false,
-    "location": [
+    "Id": 1,
+    "Name": "Container1",
+    "Type": "closed",
+    "Flipped": false,
+    "Location": [
       1.234,
       2.345,
       3.456
     ]
   },
   {
-    "id": 2,
-    "name": "Container_2",
-    "type": "open",
-    "flipped": true,
-    "location": [
+    "Id": 2,
+    "Name": "Container2",
+    "Type": "open",
+    "Flipped": true,
+    "Location": [
+      1.234,
+      2.345,
+      3.456
+    ]
+  },
+  {
+    "Id": 3,
+    "Name": "Unexpected_Property",
+    "Comment": true,
+    "Type": "open",
+    "Flipped": true,
+    "Location": [
+      1.234,
+      2.345,
+      3.456
+    ]
+  },
+  {
+    "Id": 4,
+    "Name": "Bad Name",
+    "Type": "open",
+    "Flipped": true,
+    "Location": [
+      1.234,
+      2.345,
+      3.456
+    ]
+  },
+  {
+    "Id": 5,
+    "Name": "Missing_Type",
+    "Flipped": true,
+    "Location": [
+      1.234,
+      2.345,
+      3.456
+    ]
+  },
+  {
+    "Id": 6,
+    "Name": "Missing_Location_field",
+    "Type": "closed",
+    "Flipped": true,
+    "Location": [
+      1.234,
+      2.345
+    ]
+  },
+  {
+    "Id": 7,
+    "Name": "GoodContainer3",
+    "Type": "open",
+    "Flipped": true,
+    "Location": [
       1.234,
       2.345,
       3.456
