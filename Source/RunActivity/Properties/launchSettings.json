@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RunActivity": {
+      "commandName": "Project",
+      "commandLineArgs": "-start -timetable \"D:\\OneDrive\\Open Rails\\Demo Models\\Demo Model 1\\OR Demo Model 1 v6\\Demo Model 1\\ROUTES\\SCE\\ACTIVITIES\\OPENRAILS\\SCE_12.00 total.timetable_or\" \"SCE_12.00:Observer\" 0 1 0"
+    }
+  }
+}

@@ -42,6 +42,7 @@ using Orts.Simulation.RollingStocks;
 using Orts.Simulation.RollingStocks.SubSystems;
 using Orts.Simulation.RollingStocks.SubSystems.Brakes.MSTS;
 using Orts.Simulation.Signalling;
+using Orts.Simulation.Timetables;
 using ORTS.Common;
 using Event = Orts.Common.Event;
 
@@ -993,9 +994,60 @@ namespace Orts.Simulation.AIs
                 countRequiredAction = requiredActions.Count;
             }
 #endif
- //            Trace.TraceWarning ("Time {0} Train no. {1} Speed {2} AllowedMaxSpeed {3} Throttle percent {4} Distance travelled {5} Movement State {6} BrakePerCent {7}",
- //               clockTime, Number, SpeedMpS, AllowedMaxSpeedMpS, AITrainThrottlePercent, DistanceTravelledM, MovementState, AITrainBrakePercent);
+            //            Trace.TraceWarning ("Time {0} Train no. {1} Speed {2} AllowedMaxSpeed {3} Throttle percent {4} Distance travelled {5} Movement State {6} BrakePerCent {7}",
+            //               clockTime, Number, SpeedMpS, AllowedMaxSpeedMpS, AITrainThrottlePercent, DistanceTravelledM, MovementState, AITrainBrakePercent);
+
+            /////////////////////////////////////////////
+
+            if (this is TTTrain)
+            {
+                if (clockTime % 5 == 0) // Every 5 secs
+                {
+                    var record = new TrafficRecord();
+                    record.ClockS = clockTime;
+                    record.TrainId = Number;
+                    record.TrainName = Name;
+                    record.TrainState = Enum.GetName(typeof(AI_MOVEMENT_STATE), MovementState);
+                    record.TrainSpeedMpS = SpeedMpS;
+                    record.TrainX = (double)((FrontTDBTraveller.TileX * WorldLocation.TileSize) + FrontTDBTraveller.Location.X);
+                    record.TrainZ = (double)((FrontTDBTraveller.TileZ * WorldLocation.TileSize) + FrontTDBTraveller.Location.Z);
+                    record.PathId = this.Path.Nodes[0].ID; // Id of first node in path
+                    record.PathName = this.Path.pathName;
+                    record.AlongPathM = this.DistanceTravelledM;
+
+                    record.WriteTraffic();
+                }
+            }
+
         }
+
+        #region TrafficRecord
+        public class TrafficRecord
+        {
+            public double ClockS; // Seconds since midnight
+            public int TrainId;
+            public string TrainName;
+            public string TrainState;
+            public float TrainSpeedMpS;
+            public double TrainX;
+            public double TrainZ;
+            public int PathId;
+            public string PathName;
+            public float AlongPathM;
+
+            public void WriteTraffic()
+            {
+                int clockSeconds = (int)ClockS;
+                int hours = (clockSeconds / 3600) % 24;
+                int minutes = (clockSeconds / 60) % 60;
+                int seconds = clockSeconds % 60;
+                string stringRecord = $"{ClockS}, {hours:D2}:{minutes:D2}:{seconds:D2}"
+                    + $", {TrainId}, {TrainName}, {TrainState}, {TrainSpeedMpS:F2}, {TrainX:F1}, {TrainZ:F1}"
+                    + $", {PathId}, {PathName}, {AlongPathM:F1}";
+                File.AppendAllText(@"C:\temp\TTTraffic.csv", stringRecord + "\n");
+            }
+        }
+        #endregion
 
         //================================================================================================//
         /// <summary>
