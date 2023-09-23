@@ -2429,6 +2429,29 @@ namespace Orts.Viewer3D.Debugging
         }
     }
 
+    public static class PlatformRecord
+    {
+        private static string Filename = @"C:\temp\TTPlatform.csv";
+
+        public static void WritePlatformHeader()
+        {
+            var writer = File.CreateText(Filename);
+            string stringRecord = "Id,LocationX,LocationY"
+                + ",Name,Extent1X,Extent1Y,Extent2X,Extent2Y"
+                + ",LinkId,Station";
+            writer.WriteLine(stringRecord);
+            writer.Close();
+        }
+
+        public static void WritePlatform(PlatformWidget platform)
+        {
+            string stringRecord = $"{platform.Id},{platform.Location.X:F1},{platform.Location.Y:F1}"
+                + $",{platform.Name},{platform.Extent1.X:F1},{platform.Extent1.Y:F1},{platform.Extent2.X:F1},{platform.Extent2.Y:F1}"
+                + $",{platform.LinkId},{platform.Station}";
+            File.AppendAllText(Filename,stringRecord + "\n");
+        }
+    }
+
     public class dVector
     {
         public int TileX, TileZ;

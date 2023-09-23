@@ -697,6 +697,10 @@ namespace Orts.Simulation.AIs
                 }
                 else
                 {
+                    if (Number == 5 && clockTime >= 1247)
+                    {
+                        Debug.WriteLine(clockTime);
+                    }
                     AIPreUpdate(elapsedClockSeconds);
                 }
 
@@ -999,10 +1003,14 @@ namespace Orts.Simulation.AIs
 
             /////////////////////////////////////////////
 
-            if (this is TTTrain)
+            if (this is TTTrain && PreUpdate == true && Path != null)
             {
-                if (clockTime % 5 == 0) // Every 5 secs
+                if (Number == 5 && clockTime >= 1246)
                 {
+                    Debug.WriteLine($"{clockTime},{nextActionInfo?.RequiredDistance},{nextActionInfo?.RequiredSpeedMpS}");
+                }
+                if (clockTime % 5 == 0) // Every 5 secs
+                {                    
                     var record = new TrafficRecord();
                     record.ClockS = clockTime;
                     record.TrainId = Number;
@@ -1011,11 +1019,11 @@ namespace Orts.Simulation.AIs
                     record.TrainSpeedMpS = SpeedMpS;
                     record.TrainX = (double)((FrontTDBTraveller.TileX * WorldLocation.TileSize) + FrontTDBTraveller.Location.X);
                     record.TrainZ = (double)((FrontTDBTraveller.TileZ * WorldLocation.TileSize) + FrontTDBTraveller.Location.Z);
-                    record.PathId = this.Path.Nodes[0].ID; // Id of first node in path
+                    record.PathId = this.Path.FirstNode.NextMainTVNIndex;
                     record.PathName = this.Path.pathName;
                     record.AlongPathM = this.DistanceTravelledM;
 
-                    record.WriteTraffic();
+                    record.WriteTraffic(this);
                 }
             }
 
@@ -1024,27 +1032,41 @@ namespace Orts.Simulation.AIs
         #region TrafficRecord
         public class TrafficRecord
         {
+            public static string TrafficFilename = @"C:\temp\TTTraffic.csv";
+
             public double ClockS; // Seconds since midnight
             public int TrainId;
             public string TrainName;
             public string TrainState;
             public float TrainSpeedMpS;
+            public bool Direction;
             public double TrainX;
             public double TrainZ;
             public int PathId;
             public string PathName;
             public float AlongPathM;
 
-            public void WriteTraffic()
+            public void WriteTrafficHeader()
+            {
+                var writer = File.CreateText(TrafficFilename);
+                string stringRecord = $"ClockS,Time"
+                    + ",TrainId,TrainName,TrainState,TrainSpeedMpS,TrainDirection,TrainX,TrainZ"
+                    + ",PathId,PathName,AlongPathM";
+                writer.WriteLine(stringRecord);
+                writer.Close();
+            }
+
+            public void WriteTraffic(AITrain train)
             {
                 int clockSeconds = (int)ClockS;
                 int hours = (clockSeconds / 3600) % 24;
                 int minutes = (clockSeconds / 60) % 60;
                 int seconds = clockSeconds % 60;
-                string stringRecord = $"{ClockS}, {hours:D2}:{minutes:D2}:{seconds:D2}"
-                    + $", {TrainId}, {TrainName}, {TrainState}, {TrainSpeedMpS:F2}, {TrainX:F1}, {TrainZ:F1}"
-                    + $", {PathId}, {PathName}, {AlongPathM:F1}";
-                File.AppendAllText(@"C:\temp\TTTraffic.csv", stringRecord + "\n");
+                var direction = (Traveller.TravellerDirection)train.MUDirection;
+                string stringRecord = $"{ClockS},{hours:D2}:{minutes:D2}:{seconds:D2}"
+                    + $",{TrainId},{TrainName},{TrainState},{TrainSpeedMpS:F2},{direction},{TrainX:F1},{TrainZ:F1}"
+                    + $",{PathId},{PathName},{AlongPathM:F1}";
+                File.AppendAllText(TrafficFilename, stringRecord + "\n");
             }
         }
         #endregion

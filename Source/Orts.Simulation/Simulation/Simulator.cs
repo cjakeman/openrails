@@ -497,6 +497,10 @@ namespace Orts.Simulation
 
             TTTrain playerTTTrain = null;
             List<TTTrain> allTrains = TTinfo.ProcessTimetable(arguments, cancellation);
+
+            var trafficRecord = new AITrain.TrafficRecord();
+            trafficRecord.WriteTrafficHeader();
+
             playerTTTrain = allTrains[0];
 
             AI = new AI(this, allTrains, ref ClockTime, playerTTTrain.FormedOf, playerTTTrain.FormedOfType, playerTTTrain, cancellation);

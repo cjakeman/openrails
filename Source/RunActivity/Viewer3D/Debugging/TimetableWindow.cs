@@ -275,6 +275,12 @@ namespace Orts.Viewer3D.Debugging
             foreach (var p in F.platforms)
                 if (p.Extent1.IsEmpty || p.Extent2.IsEmpty)
                     Trace.TraceWarning("Platform '{0}' is incomplete as the two ends do not match. It will not show in full in the Timetable Tab of the Map Window", p.Name);
+
+            PlatformRecord.WritePlatformHeader();
+            foreach (var p in F.platforms)
+            {
+                PlatformRecord.WritePlatform(p);
+            }
         }
 
         /// <summary>

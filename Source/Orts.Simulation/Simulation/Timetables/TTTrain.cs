@@ -3147,6 +3147,10 @@ namespace Orts.Simulation.Timetables
 
             if (TCRoute.ReversalInfo[TCRoute.activeSubpath].Valid)
             {
+                if (Number == 5)
+                {
+                    Debug.WriteLine($"Reverse, activeSubpath = {TCRoute.activeSubpath}");
+                }
                 int reqSection = (TCRoute.ReversalInfo[TCRoute.activeSubpath].SignalUsed && !ForceReversal) ?
                     TCRoute.ReversalInfo[TCRoute.activeSubpath].LastSignalIndex :
                     TCRoute.ReversalInfo[TCRoute.activeSubpath].LastDivergeIndex;
