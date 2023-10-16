@@ -4611,7 +4611,14 @@ namespace Orts.Simulation.Timetables
 
                 else if (nextActionInfo.NextAction == AIActionItem.AI_ACTION_TYPE.REVERSAL)
                 {
-                    if (SpeedMpS < 0.05f) MovementState = AI_MOVEMENT_STATE.STOPPED;
+                    if (SpeedMpS < 0.05f)
+                    {
+                        if (Number == 5)
+                        {
+                            Debug.WriteLine($"Train 5 REVERSAL {DistanceTravelledM}");
+                        }
+                        MovementState = AI_MOVEMENT_STATE.STOPPED;
+                    }
                     RestdelayS = DelayedStartSettings.reverseAddedDelaySperM * Length;
                 }
 

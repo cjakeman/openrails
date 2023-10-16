@@ -132,6 +132,10 @@ namespace Orts.Simulation.AIs
 
         private readonly List<ObjectItemInfo> processedList = new List<ObjectItemInfo>(); // internal processing list for CheckSignalObjects()
 
+
+        public double PrevFrontX;
+        public double PrevFrontZ;
+
 #if WITH_PATH_DEBUG
         //  Only for EnhancedActCompatibility
         public string currentAIState = "";
@@ -1010,18 +1014,27 @@ namespace Orts.Simulation.AIs
                     Debug.WriteLine($"{clockTime},{nextActionInfo?.RequiredDistance},{nextActionInfo?.RequiredSpeedMpS}");
                 }
                 if (clockTime % 5 == 0) // Every 5 secs
-                {                    
+                {
+
                     var record = new TrafficRecord();
                     record.ClockS = clockTime;
                     record.TrainId = Number;
                     record.TrainName = Name;
-                    record.TrainState = Enum.GetName(typeof(AI_MOVEMENT_STATE), MovementState);
-                    record.TrainSpeedMpS = SpeedMpS;
-                    record.TrainX = (double)((FrontTDBTraveller.TileX * WorldLocation.TileSize) + FrontTDBTraveller.Location.X);
-                    record.TrainZ = (double)((FrontTDBTraveller.TileZ * WorldLocation.TileSize) + FrontTDBTraveller.Location.Z);
+                    record.State = Enum.GetName(typeof(AI_MOVEMENT_STATE), MovementState);
+                    record.SpeedMpS = SpeedMpS;
+                    record.FrontX = (double)((FrontTDBTraveller.TileX * WorldLocation.TileSize) + FrontTDBTraveller.Location.X);
+                    record.FrontZ = (double)((FrontTDBTraveller.TileZ * WorldLocation.TileSize) + FrontTDBTraveller.Location.Z);
+                    record.LengthM = Length;
+                    //record.RearX = (double)((RearTDBTraveller.TileX * WorldLocation.TileSize) + RearTDBTraveller.Location.X);
+                    //record.RearZ = (double)((RearTDBTraveller.TileZ * WorldLocation.TileSize) + RearTDBTraveller.Location.Z);
                     record.PathId = this.Path.FirstNode.NextMainTVNIndex;
                     record.PathName = this.Path.pathName;
                     record.AlongPathM = this.DistanceTravelledM;
+
+                    record.PathAngle = Math.Atan2(record.FrontZ - PrevFrontZ, record.FrontX - PrevFrontX) * 180/Math.PI;
+
+                    PrevFrontX = record.FrontX;
+                    PrevFrontZ = record.FrontZ;
 
                     record.WriteTraffic(this);
                 }
@@ -1037,21 +1050,28 @@ namespace Orts.Simulation.AIs
             public double ClockS; // Seconds since midnight
             public int TrainId;
             public string TrainName;
-            public string TrainState;
-            public float TrainSpeedMpS;
+            public string State;
+            public float SpeedMpS;
             public bool Direction;
-            public double TrainX;
-            public double TrainZ;
+            public double LengthM;
+            public double FrontX;
+            public double FrontZ;
+            //public double RearX;
+            //public double RearZ;
+            public double PathAngle;
             public int PathId;
             public string PathName;
             public float AlongPathM;
+            public string NextAction;
+            public string ControlMode;
 
             public void WriteTrafficHeader()
             {
                 var writer = File.CreateText(TrafficFilename);
                 string stringRecord = $"ClockS,Time"
-                    + ",TrainId,TrainName,TrainState,TrainSpeedMpS,TrainDirection,TrainX,TrainZ"
-                    + ",PathId,PathName,AlongPathM";
+                    //+ ",TrainId,TrainName,State,SpeedMpS,Direction,FrontX,FrontZ,RearX,RearZ"
+                    + ",TrainId,TrainName,State,SpeedMpS,Direction,LengthM,FrontX,FrontZ"
+                    + ",PathAngle,PathId,PathName,AlongPathM,NextAction,ControlMode";
                 writer.WriteLine(stringRecord);
                 writer.Close();
             }
@@ -1063,9 +1083,13 @@ namespace Orts.Simulation.AIs
                 int minutes = (clockSeconds / 60) % 60;
                 int seconds = clockSeconds % 60;
                 var direction = (Traveller.TravellerDirection)train.MUDirection;
+                var action = train.nextActionInfo?.NextAction;
+                var mode = train.ControlMode;
+                float angle = (float)Math.Atan2(FrontZ, FrontX);
                 string stringRecord = $"{ClockS},{hours:D2}:{minutes:D2}:{seconds:D2}"
-                    + $",{TrainId},{TrainName},{TrainState},{TrainSpeedMpS:F2},{direction},{TrainX:F1},{TrainZ:F1}"
-                    + $",{PathId},{PathName},{AlongPathM:F1}";
+                    //+ $",{TrainId},{TrainName},{State},{SpeedMpS:F2},{direction},{FrontX:F1},{FrontZ:F1},{RearX:F1},{RearZ:F1}"
+                    + $",{TrainId},{TrainName},{State},{SpeedMpS:F2},{direction},{LengthM:F0},{FrontX:F1},{FrontZ:F1}"
+                    + $",{PathAngle:F0},{PathId},{PathName},{AlongPathM:F1},{action},{mode}";
                 File.AppendAllText(TrafficFilename, stringRecord + "\n");
             }
         }
@@ -2715,7 +2739,13 @@ namespace Orts.Simulation.AIs
                 else if (nextActionInfo.NextAction == AIActionItem.AI_ACTION_TYPE.REVERSAL)
                 {
                     if (Math.Abs(SpeedMpS) < 0.03f && nextActionInfo.ActivateDistanceM - DistanceTravelledM < 10.0f)
+                    {
+                        if (Number == 5)
+                        {
+                            Debug.WriteLine($"Train 5 REVERSAL {DistanceTravelledM}");
+                        }
                         MovementState = AI_MOVEMENT_STATE.STOPPED;
+                    }
                 }
 
                 // check if stopped at signal
