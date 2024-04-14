@@ -827,8 +827,12 @@ namespace Orts.Simulation.AIs
         public AITrain CreateAITrainDetail(Service_Definition sd, Traffic_Service_Definition trfDef, ServiceFile srvFile, bool isTimetableMode, bool isInitialPlayerTrain)
         {
             // Read consist file
-            string consistFileName = Simulator.BasePath + @"\TRAINS\CONSISTS\" + srvFile.Train_Config + ".CON";
-            ConsistFile conFile = new ConsistFile(consistFileName);
+            //string consistFileName = Simulator.BasePath + @"\TRAINS\CONSISTS\" + srvFile.Train_Config + ".CON";
+            //ConsistFile conFile = new ConsistFile(consistFileName);
+            //string pathFileName = Simulator.RoutePath + @"\PATHS\" + srvFile.PathID + ".PAT";
+
+            string consistFileNameWithoutExtension = Simulator.BasePath + @"\TRAINS\CONSISTS\" + srvFile.Train_Config;
+            var conFile = new Orts.Formats.OR.Consist(consistFileNameWithoutExtension);
             string pathFileName = Simulator.RoutePath + @"\PATHS\" + srvFile.PathID + ".PAT";
 
             // Patch Placingproblem - JeroenP
@@ -854,7 +858,7 @@ namespace Orts.Simulation.AIs
             if (!Simulator.NameDictionary.ContainsKey(train.Name.ToLower()))
                 Simulator.NameDictionary.Add(train.Name.ToLower(), train);
 
-            if (consistFileName.Contains("tilted")) train.IsTilting = true;
+            if (consistFileNameWithoutExtension.Contains("tilted")) train.IsTilting = true;
 
             // Also set Route max speed for speedpost-processing in train.cs
             train.TrainMaxSpeedMpS = (float)Simulator.TRK.Tr_RouteFile.SpeedLimit;
@@ -887,7 +891,7 @@ namespace Orts.Simulation.AIs
 
                 if (!File.Exists(wagonFilePath))
                 {
-                    Trace.TraceWarning($"Ignored missing {(wagon.IsEngine ? "engine" : "wagon")} {wagonFilePath} in consist {consistFileName}");
+                    Trace.TraceWarning($"Ignored missing {(wagon.IsEngine ? "engine" : "wagon")} {wagonFilePath} in consist {consistFileNameWithoutExtension}");
                     continue;
                 }
 

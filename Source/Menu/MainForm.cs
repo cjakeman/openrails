@@ -33,6 +33,7 @@ using System.Resources;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Activity = ORTS.Menu.Activity;
+using Consist = ORTS.Menu.Consist;
 using Path = ORTS.Menu.Path;
 
 namespace ORTS
